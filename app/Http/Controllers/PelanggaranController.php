@@ -58,4 +58,11 @@ class PelanggaranController extends Controller
             'message'   => ($result?'Success':'Gagal')
         ];        
     }
+
+    //PELANGGARAN
+
+    public function pelanggaran_add()
+    {
+        return view('content.pelanggaran.pelanggaran_add');
+    }
 }

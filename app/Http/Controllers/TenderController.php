@@ -95,7 +95,9 @@ class TenderController extends Controller
             ->where('pegawais.role' ,'=','Pegawai')
             ->select('pegawais.*')
             ->get();
-
+            
+            $jns_pelanggaran = DB::table('jenis_pelanggarans')->get();
+        
 
 
             // dump($isnottender);
@@ -104,6 +106,7 @@ class TenderController extends Controller
                 'data' => $isnottender,
                 'barang' => $barang,
                 'pegawai' => $pegawai,
+                'jns_pelanggaran'=>$jns_pelanggaran,
             ]);
 
 

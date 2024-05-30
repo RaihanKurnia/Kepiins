@@ -152,5 +152,5 @@ Route::group(['middleware' => 'CekLogin'], function() {
     Route::post('/jenis_pelanggaran/data_remove',[PelanggaranController::class, 'jns_pelanggaran_remove'])->name('jns_pelanggaran_remove');
 
     //PELANGGARAN
-    
+    Route::get('/pelanggaran/add', [PelanggaranController::class, 'pelanggaran_add'])->name('pelanggaran_add');
 });

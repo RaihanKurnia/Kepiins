@@ -48,7 +48,7 @@
                         </h3>
                     </div>
                     <div class="card-toolbar">
-                        <a href="{{asset('/tender')}}" class="btn btn-light-primary font-weight-bolder mr-2">
+                        <a  href="javascript:void(0);" onclick="window.history.back();" class="btn btn-light-primary font-weight-bolder mr-2">
                             <i class="ki ki-long-arrow-back icon-sm"></i>Back</a>
                         <div class="btn-group">
                             <button type="button" class="btn btn-primary font-weight-bolder" onclick="addtender()" id="save_pegawai">
