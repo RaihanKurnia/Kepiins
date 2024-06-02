@@ -41,9 +41,8 @@
 
 
             
-            <div class="row">
-                
-                <div class="col-lg-12">
+            <div class="row">             
+                <div class="container">
                     <!--begin::Advance Table Widget 4-->
                     <div class="card card-custom card-stretch gutter-b">
                         <div class="row align-items-center">
@@ -68,49 +67,83 @@
                 </div>
             </div>
             @if(session()->get('role') === 'Pegawai')
-            <div class="row" id="pegawai">
-                <div class="col-lg-12">
-                    <!--begin::Advance Table Widget 4-->
-                    <div class="card card-custom card-stretch gutter-b" id="chart_dash">
-                        <!--begin::Header-->
-                        <div class="card-header border-0 py-5">
-                            <h3 class="card-title align-items-start flex-column">
-                                <span class="card-label font-weight-bolder text-dark">Agents Stats</span>
-                                <span class="text-muted mt-3 font-weight-bold font-size-sm">More than 400+ new members</span>
-                            </h3>
-                            <div class="card-toolbar">
-                                <!-- <a  onclick="select_range()" class="btn btn-info font-weight-bolder font-size-sm mr-3">New Report</a> -->
-                                <a  onclick="downloadPNG()" class="btn btn-danger font-weight-bolder font-size-sm">Print</a>
-                            </div>
-                        </div>
-                        
-                        <!-- <div class="form-group row">
-                          <label class=" col-lg-3 col-sm-12">Placeholder</label>
-                          <div class="col-lg-4 col-md-9 col-sm-12">
-                            <select class="form-control selectpicker" title="Choose one of the following..." id="date">
-                              <option value="I">Triwulan I</option>
-                              <option value="II">Triwulan II</option>
-                              <option value="III">Triwulan III</option>
-                              <option value="IV">Triwulan IV</option>
-                            </select>
+              <div class="row" id="pegawai">
+                  <div class="col-lg-12">
+                      <!--begin::Advance Table Widget 4-->
+                      <div class="card card-custom card-stretch gutter-b" id="chart_dash">
+                          <!--begin::Header-->
+                          <div class="card-header border-0 py-5">
+                              <h3 class="card-title align-items-start flex-column">
+                                  <span class="card-label font-weight-bolder text-dark">Agents Stats</span>
+                                  <span class="text-muted mt-3 font-weight-bold font-size-sm">More than 400+ new members</span>
+                              </h3>
+                              <div class="card-toolbar">
+                                  <!-- <a  onclick="select_range()" class="btn btn-info font-weight-bolder font-size-sm mr-3">New Report</a> -->
+                                  <a  onclick="downloadPNG()" class="btn btn-danger font-weight-bolder font-size-sm">Print</a>
+                              </div>
                           </div>
-											  </div> -->
-                        <!--end::Header-->
-                        <!--begin::Body-->
-                        <div class="card-body pt-0 pb-3">
-                            <div id="chart">
+                          
+                          <!-- <div class="form-group row">
+                            <label class=" col-lg-3 col-sm-12">Placeholder</label>
+                            <div class="col-lg-4 col-md-9 col-sm-12">
+                              <select class="form-control selectpicker" title="Choose one of the following..." id="date">
+                                <option value="I">Triwulan I</option>
+                                <option value="II">Triwulan II</option>
+                                <option value="III">Triwulan III</option>
+                                <option value="IV">Triwulan IV</option>
+                              </select>
                             </div>
-                        </div>
-                        <!--end::Body-->
-                    </div>
-                    <!--end::Advance Table Widget 4-->
-                </div>
-            </div>
+                          </div> -->
+                          <!--end::Header-->
+                          <!--begin::Body-->
+                          <div class="card-body pt-0 pb-3">
+                              <div id="chart">
+                              </div>
+                          </div>
+                          <!--end::Body-->
+                      </div>
+                      <!--end::Advance Table Widget 4-->
+                  </div>
+              </div>
             @endif
-            @if(session()->get('role') != 'Pegawai')
-            <div class="row" id="nonpegawai">
-              <span>bukan pegawai</span>
-            </div>
+            @if(session()->get('role') === 'HRD')
+              <div class="row" id="nonpegawai">
+                <div class="container">
+                  <div class="card card-custom gutter-b">
+                    <div class="card-header flex-wrap border-0 pt-6 pb-0">
+                      <div class="card-title">
+                        <h3 class="card-label">Data Pegawai
+                        <span class="d-block text-muted pt-2 font-size-sm">Data Table Pegawai</span></h3>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                      <!--begin: Datatable-->
+                      <table class="table table-separate table-head-custom table-checkable" id="kt_datatable1">
+                        <thead>
+                          <tr>
+                            <th>No </th>
+                            <!-- <th>ID</th> -->
+                            <th>Nama</th>
+                            <th>Alamat</th>
+                            <th>No Telp</th>
+                            <th>Email</th>
+                            <th>Jabatan</th> 
+                            <th>Actions</th>
+                          </tr>
+                        </thead>    
+                        <tbody> 
+                        </tbody>
+                      </table>
+                      <!--end: Datatable-->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            @endif
+            @if(session()->get('role') === 'Manager')
+              <div class="row" id="nonpegawai">
+                <span>bukan pegawai</span>
+              </div>
             @endif
             <!--end::Row-->
             <!--end::Dashboard-->
@@ -129,6 +162,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
+
+@if(session()->get('role') === 'Pegawai')
 <script type="text/javascript">
  
   let range = '';
@@ -277,5 +312,66 @@
         
 
 </script>
+@endif
+@if(session()->get('role') === 'HRD')
+  <script type="text/javascript">
+
+    $(document).ready(function(){
+      refreshTable();
+    });
+
+    function refreshTable(){
+      $('#kt_datatable1').DataTable({
+        "bDestroy": true,
+          "responsive":true,
+          // "orderCellsTop": true,
+          "fixedHeader": true,
+          scrollCollapse: true,
+        autoWidth: false,
+        responsive: true,
+          // ajax: "{{url('/pegawai/data_json')}}",
+        ajax: {
+          url: "{{url('/pegawai/data_json')}}",
+          error: function(xhr, errorType, thrownError) {
+            $('.dataTables_empty').text("No data available in table");
+            console.error("Kesalahan AJAX:", thrownError);
+            Swal.fire(
+                'Error!',
+                thrownError,
+                'error'
+              )
+          }
+        },
+          columns: [
+            {
+              "data" :null,
+              "render": function (data, type, row, meta) {
+                      return meta.row + meta.settings._iDisplayStart + 1;
+                  }  
+            },
+              { data: 'nama_pegawai', name: 'nama' },
+          { data: 'alamat',name: 'alamat' },
+          { data: 'nomor_telepon',name: 'no_telf' },
+          { data: 'email',name: 'email' },
+          { data: 'jabatan',name: 'jabatan' },
+              // { data: 'pelanggaran', name: 'pelanggaran' },
+              { 
+                // btn ripple- btn-round btn-3d btn-success
+                  "data": "idpegawai",
+                  "orderable": false,
+                  "render": function ( data, type, row ) {
+                    return "<div style='white-space: nowrap;'><a class='btn btn-icon btn-light-success btn-xs mr-2' href='{{asset('/pegawai/view_form')}}?id="+data+"&view=1' id ="+data+">"+
+                    "<i class=' fas fa-eye'></i></a>"
+                    }
+              }
+          ]
+        });
+    };
+
+
+
+
+  </script>
+@endif
 @endsection
 

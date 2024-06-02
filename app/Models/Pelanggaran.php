@@ -14,8 +14,7 @@ class Pelanggaran extends Model
     'bukti_pelanggaran',
     'waktu_pelanggaran',
     'pegawai_idbpegawai',
-    'jenis_pelanggaran_idjenis_pelanggaran',
-    'tanggal_pengiriman'];
+    'jenis_pelanggaran_idjenis_pelanggaran'];
 
 }
 

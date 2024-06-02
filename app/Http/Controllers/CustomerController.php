@@ -53,6 +53,93 @@ class CustomerController extends Controller
             ]);
     }
     
+    public function customer_avg(Request $request)
+    {
+        try {
+            $param_peg = $request->param_peg;
+            $param_status = $request->param_status;
+
+            // dd($request);
+
+            if ($param_peg != null || $param_status != null ){
+                
+                $customerquery = DB::table('customers');
+                
+                if ($param_peg !== null){
+                    $customerquery->where('idpegawai_input', $param_peg);
+                }
+                if ($param_status !== null){
+                    $customerquery->where('status_app_data_customer', $param_status);
+                }
+                $customer=$customerquery->get();
+                $totalcust = $customerquery->count();
+        
+                $totalcustacc =
+                    $customerquery
+                    ->where('status_app_data_customer', '1')
+                    ->count();
+        
+                if ($totalcustacc ==0){
+                    $poin = 0;
+                }
+                else if($totalcustacc <30){
+                    $poin = 5;
+                } else if ($totalcustacc >= 30 && $totalcustacc <=60){
+                    $poin = 7;
+                } else {
+                    $poin = 9;
+                }
+            } else {
+                $customer = DB::table('customers')
+                ->get();
+        
+                $totalcust = DB::table('customers')
+                ->count();
+        
+                // $totalcustacc = DB::table('customers')
+                // ->where('status_app_data_customer', '1')
+                // ->count();
+
+                $totalcustaccperpeg = DB::table('customers')
+                ->where('status_app_data_customer', '1')
+                ->distinct()
+                ->count('idpegawai_input');
+
+                $totalcustacc = DB::table('customers')
+                ->where('status_app_data_customer', '1')
+                ->count();
+                
+        
+        
+                if(($totalcustacc) <30){
+                    $poin = 5;
+                } else if ($totalcustacc >= 30 && $totalcustacc <=60){
+                    $poin = 7;
+                } else {
+                    $poin = 9;
+                }
+            
+            
+               
+            }
+
+            return response()->json([
+                'data' => $customer,
+                'totalcus' =>$totalcust,
+                'totalcustacc' => $totalcustacc,
+                'poin' =>$poin
+                ]);
+            
+
+        } catch (\Throwable $th) {
+             return response()->json([
+                'success' => false,
+                'message' => 'data tidak ditemukan!'
+                ]);
+        }
+        
+    }
+
     public function customer_get_edit(Request $request)
     {
 
@@ -268,7 +355,7 @@ class CustomerController extends Controller
 
     public function customer_search_acc(Request $request) {
         try{
-            $customers = Customer::with(['pegawai:idpegawai,nama_pegawai']) // Load related pegawai with only idpegawai and nama_pegawai
+            $customers = Customer::with(['pegawai:idpegawai,nama_pegawai']) 
             ->where('idpegawai_input', 'like', '%' .$request->param_peg. '%')
             ->where('status_app_data_customer', 'like', '%' .$request->param_status. '%')
             ->get()

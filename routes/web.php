@@ -106,6 +106,8 @@ Route::group(['middleware' => 'CekLogin'], function() {
     Route::post('/customer/data_edit',[CustomerController::class, 'customer_edit'])->name('customer_edit');
     Route::post('/customer/data_remove',[CustomerController::class, 'customer_remove'])->name('customer_remove');
     Route::post('/customer/search',[CustomerController::class, 'customer_search'])->name('customer_search');
+    Route::post('/customer/search_avg',[CustomerController::class, 'customer_avg'])->name('customer_avg');
+    
 
 
     //PESANAN
@@ -122,6 +124,9 @@ Route::group(['middleware' => 'CekLogin'], function() {
     Route::post('/tender/pesanan_add', [TenderController::class, 'add_pesanan'])->name('add_pesanan');
     Route::post('/tender/pesanan_update', [TenderController::class, 'updatepesanan'])->name('update_pesanan');
     Route::post('/tender/search_data', [TenderController::class, 'tender_serach_data'])->name('tender_serach_data');
+    Route::post('/tender/avg', [TenderController::class, 'tender_avg'])->name('tender_avg');
+    Route::post('/tender/avg_search', [TenderController::class, 'tender_avg_search'])->name('tender_avg_search');
+
 
     //APPROVAL TENDER
     Route::get('/tender/approval', [TenderController::class, 'tender_approval'])->name('tender_approval');
@@ -153,4 +158,10 @@ Route::group(['middleware' => 'CekLogin'], function() {
 
     //PELANGGARAN
     Route::get('/pelanggaran/add', [PelanggaranController::class, 'pelanggaran_add'])->name('pelanggaran_add');
+    Route::post('/pelanggaran/add_action',[PelanggaranController::class, 'pelanggaran_add_action'])->name('pelanggaran_add_action');
+    Route::post('/pelanggaran/remove_action',[PelanggaranController::class, 'pelanggaran_remove_action'])->name('pelanggaran_remove_action');
+    Route::get('/pelanggaran/edit_prepare',[PelanggaranController::class, 'pelanggaran_edit_prepare'])->name('pelanggaran_edit_prepare');
+
+
 });
+

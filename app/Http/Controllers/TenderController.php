@@ -55,7 +55,9 @@ class TenderController extends Controller
             $totalorder = $pesanans->sum('jumlah_order');
             $totalorderacc = $filteredPesanans->sum('jumlah_order');
 
-            if($totalorderacc <300){
+            if ($totalorderacc == 0){
+                $poin = 0;
+            }else if($totalorderacc <300){
                 $poin = 5;
             } else if ($totalorderacc >= 300 && $totalorderacc <=1500){
                 $poin = 7;
@@ -78,6 +80,128 @@ class TenderController extends Controller
         }
 
     }
+
+    public function tender_avg(Request $request) {
+        try{
+            //select all tender    
+            $pesanans = Pesanan::with(['customer.pegawai', 'barang'])
+                // ->whereHas('customer', function ($query) {
+                //     $query->where('idpegawai_input', session('id'));
+                // })
+                ->get()
+                ->map(function ($pesanan) {
+                    return [
+                        'id_pesanan' =>$pesanan->id_pesanan,
+                        'nama_pegawai' => $pesanan->customer->pegawai->nama_pegawai,
+                        'nama_customer' => $pesanan->customer->nama_customer,
+                        'email' => $pesanan->customer->email,
+                        'nomor_telefon' => $pesanan->customer->nomor_telefon,
+                        'pengiriman_idpengiriman' => $pesanan->pengiriman_idpengiriman,
+                        'nama_barang' => $pesanan->barang->nama_barang,
+                        'jumlah_order' => $pesanan->jumlah_order,
+                        'tanggal_pemesanan' => Carbon::parse($pesanan->tanggal_pemesanan)->format('Y-m-d'),
+                        'tanggal_pengiriman' => Carbon::parse($pesanan->tanggal_pengiriman)->format('Y-m-d'),
+                        'status_app_pesanan' => $pesanan->status_app_pesanan,
+                    ];
+                });
+            
+                 
+            $filteredPesanans = $pesanans->filter(function ($pesanan) {
+                return $pesanan['status_app_pesanan'] == '1';
+            });
+
+            $totalorder = $pesanans->sum('jumlah_order');
+            $totalorderacc = $filteredPesanans->sum('jumlah_order');
+
+            if($totalorderacc <300){
+                $poin = 5;
+            } else if ($totalorderacc >= 300 && $totalorderacc <=1500){
+                $poin = 7;
+            } else {
+                $poin = 9;
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $pesanans,
+                'totalorder' =>$totalorder,
+                'totalorderacc'=>$totalorderacc,
+                'poin'=>$poin
+            ]);
+        }catch (\Exception $e){
+            return [
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat pengambilan data'
+            ];
+        }
+    }
+
+    public function tender_avg_search(Request $request){
+        // dd($request);
+        try{
+            //select all tender    
+            $pesanans = Pesanan::with(['customer.pegawai', 'barang'])
+            ->when($request->param_custname, function ($query) use ($request) {
+                return $query->whereHas('customer', function ($query) use ($request) {
+                    return $query->where('idpegawai_input', $request->param_custname);
+                });
+            })
+            ->when($request->param_barang, function ($query) use ($request) {
+                return $query->where('barang_idbarang', $request->param_barang);
+            })
+            ->when($request->param_status, function ($query) use ($request) {
+                return $query->where('status_app_pesanan', $request->param_status);
+            })
+            ->get()
+            ->map(function ($pesanan) {
+                return [
+                    'id_pesanan' =>$pesanan->id_pesanan,
+                    'nama_pegawai' => $pesanan->customer->pegawai->nama_pegawai,
+                    'nama_customer' => $pesanan->customer->nama_customer,
+                    'email' => $pesanan->customer->email,
+                    'nomor_telefon' => $pesanan->customer->nomor_telefon,
+                    'pengiriman_idpengiriman' => $pesanan->pengiriman_idpengiriman,
+                    'nama_barang' => $pesanan->barang->nama_barang,
+                    'jumlah_order' => $pesanan->jumlah_order,
+                    'tanggal_pemesanan' => Carbon::parse($pesanan->tanggal_pemesanan)->format('Y-m-d'),
+                    'tanggal_pengiriman' => Carbon::parse($pesanan->tanggal_pengiriman)->format('Y-m-d'),
+                    'status_app_pesanan' => $pesanan->status_app_pesanan,
+                ];
+            });
+            
+                 
+            $filteredPesanans = $pesanans->filter(function ($pesanan) {
+                return $pesanan['status_app_pesanan'] == '1';
+            });
+
+            $totalorder = $pesanans->sum('jumlah_order');
+            $totalorderacc = $filteredPesanans->sum('jumlah_order');
+
+            if ($totalorderacc == 0){
+                $poin = 0;
+            }else if($totalorderacc <300){
+                $poin = 5;
+            } else if ($totalorderacc >= 300 && $totalorderacc <=1500){
+                $poin = 7;
+            } else {
+                $poin = 9;
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $pesanans,
+                'totalorder' =>$totalorder,
+                'totalorderacc'=>$totalorderacc,
+                'poin'=>$poin
+            ]);
+        }catch (\Exception $e){
+            return [
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat pengambilan data'
+            ];
+        }
+    }
+
 
     public function tender_list(){
         try{
@@ -229,6 +353,8 @@ class TenderController extends Controller
             'data' => $pesanans
             ]);
     }
+
+
 
     public function add_pesanan(Request $request){
         DB::beginTransaction();

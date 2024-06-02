@@ -48,35 +48,11 @@
                         </h3>
                     </div>
                     <div class="card-toolbar">
-                        <a href="{{asset('/pegawai')}}" class="btn btn-light-primary font-weight-bolder mr-2">
+                        <a href="javascript:void(0);" onclick="window.history.back();" class="btn btn-light-primary font-weight-bolder mr-2">
                             <i class="ki ki-long-arrow-back icon-sm"></i>Back</a>
                         <div class="btn-group">
                             <button type="button" class="btn btn-primary font-weight-bolder" onclick="add()" id="save_pegawai">
                                 <i class="ki ki-check icon-sm"></i>Save Form</button>
-                            <!-- <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
-                            <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right">
-                                <ul class="nav nav-hover flex-column">
-                                    <li class="nav-item">
-                                        <a href="#" class="nav-link">
-                                            <i class="nav-icon flaticon2-reload"></i>
-                                            <span class="nav-text">Save &amp; continue</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="#" class="nav-link">
-                                            <i class="nav-icon flaticon2-add-1"></i>
-                                            <span class="nav-text">Save &amp; add new</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="#" class="nav-link">
-                                            <i class="nav-icon flaticon2-power"></i>
-                                            <span class="nav-text">Save &amp; exit</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div> -->
                         </div>
                     </div>
                 </div>
