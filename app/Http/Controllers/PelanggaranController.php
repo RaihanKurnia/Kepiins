@@ -8,6 +8,7 @@ use DB;
 use DataTables;
 use App\Models\JenisPelanggaran;
 use App\Models\Pelanggaran;
+use Carbon\Carbon;
 
 
 class PelanggaranController extends Controller
@@ -66,6 +67,62 @@ class PelanggaranController extends Controller
     public function pelanggaran_add()
     {
         return view('content.pelanggaran.pelanggaran_add');
+    }
+
+    public function pelanggaran_table_view() {
+        return view('content.pelanggaran.pelanggaran_table');
+    }
+
+    public function pelanggaran_table_data(Request $request) {
+       try {
+        if (session('role') == 'Pegawai'){
+        $pelanggaran = DB::table('pelanggarans as pel')
+            ->join('pegawais as peg','peg.idpegawai','=','pel.pegawai_idbpegawai')
+            ->join('jenis_pelanggarans as jns','jns.idjenis_pelanggaran','=','pel.jenis_pelanggaran_idjenis_pelanggaran')
+            ->where('pel.pegawai_idbpegawai',session('id'))
+            ->select('pel.*','peg.nama_pegawai','jns.nama_pelanggaran','jns.kategori')
+            ->get();
+        } else{
+        $pelanggaran = DB::table('pelanggarans as pel')
+            ->join('pegawais as peg','peg.idpegawai','=','pel.pegawai_idbpegawai')
+            ->join('jenis_pelanggarans as jns','jns.idjenis_pelanggaran','=','pel.jenis_pelanggaran_idjenis_pelanggaran')
+            ->select('pel.*','peg.nama_pegawai','jns.nama_pelanggaran','jns.kategori')
+            ->get();
+        }
+
+        $pelanggaran = $pelanggaran->map(function($item) {
+            $item->waktu_pelanggaran = Carbon::parse($item->waktu_pelanggaran)->format('Y-m-d');
+            $item->bukti_pelanggaran = '<div style="white-space: nowrap; text-align: center;"><a href="' . url('filesurat/' . $item->bukti_pelanggaran) . '" target="_blank">Open File</a></div>';
+            return $item;
+        });
+
+        $totalpelanggaran = $pelanggaran->count();
+
+        if($totalpelanggaran == 0){
+            $poin = 9;
+        }
+        else if($totalpelanggaran <= 2){
+            $poin = 7;
+        } else {
+            $poin = 5;
+        }
+
+
+        return response()->json([
+            'data' => $pelanggaran,
+            'totalpelanggaran' => $totalpelanggaran,
+            'poin' =>$poin
+            ]);
+
+
+       } catch (\Throwable $th) {
+        return [
+            'success' => false,
+            'message' => 'Terjadi kesalahan saat pengambilan data',
+            'error' => $th->getMessage()
+        ];
+        //throw $th;
+       }
     }
 
     public function pelanggaran_add_action(Request $request)

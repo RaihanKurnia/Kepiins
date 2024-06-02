@@ -160,8 +160,8 @@ Route::group(['middleware' => 'CekLogin'], function() {
     Route::get('/pelanggaran/add', [PelanggaranController::class, 'pelanggaran_add'])->name('pelanggaran_add');
     Route::post('/pelanggaran/add_action',[PelanggaranController::class, 'pelanggaran_add_action'])->name('pelanggaran_add_action');
     Route::post('/pelanggaran/remove_action',[PelanggaranController::class, 'pelanggaran_remove_action'])->name('pelanggaran_remove_action');
-    Route::get('/pelanggaran/edit_prepare',[PelanggaranController::class, 'pelanggaran_edit_prepare'])->name('pelanggaran_edit_prepare');
-
+    Route::get('/pelanggaran/table_view',[PelanggaranController::class, 'pelanggaran_table_view'])->name('pelanggaran_table_view');
+    Route::post('/pelanggaran/table_data',[PelanggaranController::class, 'pelanggaran_table_data'])->name('pelanggaran_table_data');
 
 });
 

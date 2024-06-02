@@ -22,9 +22,18 @@ class DashboardController extends Controller
             ];
         };
 
+        $defaultvaluespelanggaran = function () {
+            return [
+                1 => 9,
+                2 => 9,
+                3 => 9,
+                4 => 9,
+            ];
+        };
+
         $nilai1default = $defaultvalues();
         $nilai2default = $defaultvalues();
-        $nilai3default = $defaultvalues();
+        $nilai3default = $defaultvaluespelanggaran();
         
         $resultsnilai1 = DB::table('customers')
             ->select(DB::raw('QUARTER(created_at) as triwulan, COUNT(*) as total'))
@@ -35,16 +44,25 @@ class DashboardController extends Controller
             ->get();
 
         $resultsnilai2 = Pesanan::with(['customer.pegawai'])
-        ->whereHas('customer', function ($query) {
-            $query->where('idpegawai_input', session('id'));
-        })
-        ->where('status_app_pesanan', '1')
-        ->select(DB::raw('QUARTER(created_at) as triwulan, SUM(jumlah_order) as total'))
-        ->groupBy(DB::raw('QUARTER(created_at)'))
-        ->get();
+            ->whereHas('customer', function ($query) {
+                $query->where('idpegawai_input', session('id'));
+            })
+            ->where('status_app_pesanan', '1')
+            ->select(DB::raw('QUARTER(created_at) as triwulan, SUM(jumlah_order) as total'))
+            ->whereYear('created_at', $year)
+            ->groupBy(DB::raw('QUARTER(created_at)'))
+            ->get();
 
         // dump($resultsnilai2);
             
+        $resultsnilai3 = DB::table('pelanggarans')
+            ->select(DB::raw('QUARTER(waktu_pelanggaran) as triwulan, COUNT(*) as total'))
+            ->where('pegawai_idbpegawai', '3')
+            // ->where('pegawai_idbpegawai', session('id'))
+            ->whereYear('waktu_pelanggaran', $year)
+            ->groupBy(DB::raw('QUARTER(waktu_pelanggaran)'))
+            ->get();
+
         foreach ($resultsnilai1 as $resultnilai1) {
             $total = $resultnilai1->total;
             if ($total < 30) {
@@ -68,6 +86,19 @@ class DashboardController extends Controller
             }
             $nilai2default[$resultnilai2->triwulan] = $total;
         }
+       
+
+       
+        foreach ($resultsnilai3 as $resultnilai3) {
+            $total = $resultnilai3->total;
+            if ($total ==1 ) {
+                $total = 7;
+            } else {
+                $total = 5;
+            }
+            $nilai3default[$resultnilai3->triwulan] = $total;
+        }
+       
         
         $nilai1 = [
             'name' => 'Nilai Input Customer',
