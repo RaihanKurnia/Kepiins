@@ -141,6 +141,7 @@
 								<label><b>Status:</b></label>
 								<select class="form-control datatable-input" data-col-index="7" id='status'>
 									<option value="all">All</option>
+									<option value="0">Pending</option>
 									<option value="1">Approved</option>
 									<option value="2">Rejected</option>
 								</select>
@@ -223,6 +224,22 @@ $(document).ready(function(){
 	search_data();
 });
 
+$('#pegawai, #barang, #status').change(function() {
+		search();
+});
+
+function search() {
+	var custname = $('#pegawai').val();
+	var barang = $('#barang').val();
+	var status = $('#status').val();
+	// searchTable(custname,barang,status)
+
+	if (custname == 'all' && barang== 'all' && status == 'all'){
+		refreshTable();
+	} else {
+		searchTable(custname,barang,status)
+	}
+}
 
 function search_data() {
 	$.ajax({  
@@ -324,6 +341,94 @@ function refreshTable(){
 	    ]
     });
 };
+
+
+function searchTable(custname,barang,status) {
+	// console.log('masuk sini');
+	$('#kt_datatable1').DataTable({
+		"bDestroy": true,
+		"responsive":true,
+		// "orderCellsTop": true,
+		"fixedHeader": true,
+		scrollCollapse: true,
+		autoWidth: false,
+		responsive: true,
+		// ajax: "{{url('/pegawai/data_json')}}",
+		ajax: {
+			url : "{{route('tender_avg_search')}}",
+			type: 'POST',
+			data: {
+				"_token": "{{csrf_token()}}",
+				param_custname:custname == "all" ? "" : custname,
+				param_barang:barang == "all" ? "" : barang,
+				param_status:status == "all" ? "" : status
+			},
+			error: function(xhr, errorType, thrownError) {
+				$('.dataTables_empty').text("No data available in table");
+				Swal.fire(
+					'Error!',
+					thrownError,
+					'error'
+				)
+			},
+		},
+		columns: [
+			{
+				"data" :null,
+				"render": function (data, type, row, meta) {
+					return meta.row + meta.settings._iDisplayStart + 1;
+				}  
+			},
+			{ data: 'nama_pegawai', name: 'nama_pegawai' },
+			{ data: 'nama_customer',name: 'nama_customer' },
+			{ data: 'email',name: 'email' },
+			{ data: 'nomor_telefon',name: 'nomor_telefon' },
+			{ data: 'pengiriman_idpengiriman',name: 'pengiriman_idpengiriman' },
+			{ data: 'nama_barang',name: 'nama_barang' },
+			{ data: 'jumlah_order',name: 'jumlah_order' },
+			{ data: 'tanggal_pemesanan',name: 'tanggal_pemesanan' },
+			{ data: 'tanggal_pengiriman',name: 'tanggal_pengiriman' },
+			{
+				data: 'status_app_pesanan',
+				name: 'status_app_pesanan',
+				render: function (data, type, row) {
+					if (data === '0') {
+						return  "<span class='label label-xl label-inline label-light-warning'>Pending</span>";
+					} else if (data === '1') {
+						return "<span class='label label-xl label-inline label-light-success'>Approved</span>";
+					} else {
+						return "<span class='label label-xl label-inline label-light-danger'>Rejected</span>";
+					}
+				}
+			},
+			{ 
+			// btn ripple- btn-round btn-3d btn-success
+				"data": "id_pesanan",
+				"orderable": false,
+				"render": function ( data, type, row ) {
+				if (row.status_app_pesanan === '0') {
+						return "<div style='white-space: nowrap;'>" +
+									"<a class='btn btn-icon btn-light-success btn-xs mr-2' href='{{asset('/tender/view_form')}}?id="+data+"&view=1' id ="+data+">"+
+									"<i class=' fas fa-eye'></i></a>"+"<a class='btn btn-icon btn-light-warning btn-xs mr-2'   href='{{asset('/tender/view_form')}}?id="+data+"' id ="+data+">"+
+									"<i class=' fas fa-pencil-alt'></i></a>"+"<a class='btn btn-icon btn-light-danger btn-xs mr-2' href='#' onclick=\"remove('"+data+"')\" >"+
+									"<i class=' fas fa-trash'></i></a>"+
+								"</div>";
+					} else {
+						return "<div style='white-space: nowrap; text-align: center;' >" +
+									"<a class='btn btn-icon btn-light-primary btn-xs mr-2' href='{{asset('/tender/view_form')}}?id="+data+"&view=1' id="+data+"><i class='fas fa-eye'></i></a>" +
+								"</div>";
+					}
+				
+				
+				
+				}
+			}
+		]
+	});
+
+
+		
+}
 
 function action(data,triger) {
 	// console.log(triger);

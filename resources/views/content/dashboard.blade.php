@@ -142,7 +142,42 @@
             @endif
             @if(session()->get('role') === 'Manager')
               <div class="row" id="nonpegawai">
-                <span>bukan pegawai</span>
+              <div class="col-lg-12">
+                      <!--begin::Advance Table Widget 4-->
+                      <div class="card card-custom card-stretch gutter-b" id="chart_dash">
+                          <!--begin::Header-->
+                          <div class="card-header border-0 py-5">
+                              <h3 class="card-title align-items-start flex-column">
+                                  <span class="card-label font-weight-bolder text-dark">Agents Stats</span>
+                                  <span class="text-muted mt-3 font-weight-bold font-size-sm">More than 400+ new members</span>
+                              </h3>
+                              <div class="card-toolbar">
+                                  <!-- <a  onclick="select_range()" class="btn btn-info font-weight-bolder font-size-sm mr-3">New Report</a> -->
+                                  <a  onclick="downloadPNG()" class="btn btn-danger font-weight-bolder font-size-sm">Print</a>
+                              </div>
+                          </div>
+                          
+                          <!-- <div class="form-group row">
+                            <label class=" col-lg-3 col-sm-12">Placeholder</label>
+                            <div class="col-lg-4 col-md-9 col-sm-12">
+                              <select class="form-control selectpicker" title="Choose one of the following..." id="date">
+                                <option value="I">Triwulan I</option>
+                                <option value="II">Triwulan II</option>
+                                <option value="III">Triwulan III</option>
+                                <option value="IV">Triwulan IV</option>
+                              </select>
+                            </div>
+                          </div> -->
+                          <!--end::Header-->
+                          <!--begin::Body-->
+                          <div class="card-body pt-0 pb-3">
+                              <div id="chart">
+                              </div>
+                          </div>
+                          <!--end::Body-->
+                      </div>
+                      <!--end::Advance Table Widget 4-->
+                  </div>
               </div>
             @endif
             <!--end::Row-->
@@ -372,6 +407,157 @@
 
 
   </script>
+@endif
+
+@if(session()->get('role') === 'Manager')
+<script type="text/javascript">
+ 
+  let range = '';
+  let chart;
+
+  $('#date').on('change', function(){
+    var selectedOption = $(this).val();
+    render_chart(selectedOption)
+  });
+
+
+  $(document).ready(function(){
+    var quarterRoman = ["","I","II","III","IV"][Math.floor((new Date().getMonth())/3)+1];
+    render_chart(quarterRoman);
+  });
+
+
+  function render_chart(update) {
+    console.log(update);
+    $.ajax({  
+          url : "{{route('chart_manager')}}",
+          data: {
+            "_token": "{{ csrf_token() }}",
+            param_range:update
+          },
+          type : "post",
+          dataType : "json",
+          async : false,
+          error: function(xhr, errorType, thrownError) {
+            console.error("Kesalahan AJAX:", thrownError);
+            Swal.fire(
+                    'Error!',
+                    thrownError,
+                    'error'
+                )
+        },
+          success : function(result) {
+            let title ='Bagan Laporan Kinerja Karyawan Periode Triwulan - ' + update;
+            var options = {
+                // series:result.success,
+                series: [
+                  result.nilai1,
+                  result.nilai2, 
+                  result.nilai3],
+                legend: {
+                  position: 'top',
+                  horizontalAlign: 'center',
+                  fontSize: '16px',
+                  fontFamily: 'Helvetica, Arial, sans-serif'
+                },
+                chart: {
+                  type: 'bar',
+                  height: 350,
+                  toolbar: {
+                          show: false
+                      }
+                },
+                plotOptions: {
+                    bar: {
+                      dataLabels: {
+                      position: 'top',
+                      minItemHeight: 100
+                      }
+                    },
+                },
+                dataLabels: {
+                      enabled: true,
+                      formatter: function (val) {
+                      return val;
+                      },
+                      offsetY: -20,
+                      style: {
+                      fontSize: '12px',
+                      colors: ["#2B2B2B"]
+                      }
+                },
+                stroke: {
+                    show: true,
+                    width: 2,
+                    colors: ['transparent']
+                },
+                xaxis: {
+                  categories: ['Periode 1', 'Periode 2', 'Periode 3','Periode 4'],
+                  labels: {
+                    style: {
+                      fontSize: '14px', 
+                      fontFamily: 'Helvetica, Arial, sans-serif'
+                    }
+                  }
+                },
+                yaxis: {
+                  title: {
+                    text: 'Nilai'
+                  }
+                },
+                fill: {
+                  opacity: 1
+                },
+                title: {
+                    text: title,
+                    align: 'center'
+
+                },
+                noData: {
+                    text: 'Loading...'
+                },
+                tooltip: {
+                  y: {
+                    formatter: function (val) {
+                      return val + " Poin"
+                    }
+                  }
+                }
+            };
+            if (chart) {
+              chart.updateOptions(options);
+            } else {
+              // Jika objek chart belum ada, buat objek chart baru
+              chart = new ApexCharts(document.querySelector("#chart"), options);
+              chart.render();
+            }
+          }
+    });
+  }
+
+
+  function downloadPNG() {
+      chart.dataURI().then(({ imgURI }) => {
+          var link = document.createElement('a');
+          link.href = imgURI;
+          link.download = 'chart.png';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+      });
+  }
+
+  function printChart() {
+      var printContents = document.getElementById('chart_dash').innerHTML;
+      var originalContents = document.body.innerHTML;
+      document.body.innerHTML = printContents;
+      window.print();
+      document.body.innerHTML = originalContents;
+  }
+
+        
+
+</script>
 @endif
 @endsection
 

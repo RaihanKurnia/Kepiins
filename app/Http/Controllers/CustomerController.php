@@ -7,7 +7,9 @@ use DB;
 use DataTables;
 use App\Models\Customer;
 use App\Models\Pesanan;
+use App\Models\Penilaian;
 use App\Events\CustomerNotification;
+use Carbon\Carbon;
 
 class CustomerController extends Controller
 {
@@ -179,7 +181,9 @@ class CustomerController extends Controller
                 
                 DB::commit();
                 $customer->nama_pegawai= session('nama') ;
+                $customer->pesan = 'telah menambahkan Customer Baru';
                 $getcustomer = $customer->getAttributes();
+
                 event (new CustomerNotification($getcustomer));
              
             
@@ -243,17 +247,17 @@ class CustomerController extends Controller
             $customer = Customer::where('idcustomer', $request->param_id)->first();
         
             if ($customer) {
-                // Memeriksa apakah ada pesanan terkait dengan pelanggan
+                // cek pesanan terkait
                 $hasOrder = Pesanan::where('customer_idcustomer', $request->param_id)->exists();
         
                 if ($hasOrder) {
                     return response()->json([
                         'success' => false,
                         'message' => 'Customer memiliki pesanan yang terkait.',
-                        'hasOrder' => true // Mengirimkan flag bahwa ada pesanan terkait
+                        'hasOrder' => true // 
                     ]);
                 } else {
-                    // Menghapus pelanggan jika tidak ada pesanan terkait
+                    
                     $customer->delete();
                     return response()->json([
                         'success' => true,
@@ -398,10 +402,27 @@ class CustomerController extends Controller
         // dd($request);
         DB::beginTransaction();
         try {
+            $year = Carbon::now()->year;
             $result = Customer::where('idcustomer', $request->param_cust)
             ->update([
                 'status_app_data_customer' => $request->param_triger
             ]);
+
+            if ($result) {
+                $nilai = Customer::where('idcustomer', $request->param_cust)
+                ->first();
+
+                 Penilaian::create([
+                    'nilai' => '1',
+                    'jenis_penilaian' => 'customer',
+                    'pegawai_idpegawai' =>  $nilai->idpegawai_input,
+                    'periode' => $year
+                ]);
+
+                // return ($gas);
+
+            }
+
 
             DB::commit();
             return [
@@ -409,12 +430,14 @@ class CustomerController extends Controller
                 'message' => 'Data berhasil disimpan.'
             ];
 
-        }catch (\Exception $e) {
+        }catch (\Throwable $th) {
             DB::rollback();
             return [
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat memperbarui data pelanggan dan pesanannya.'
+                'message' => 'Terjadi kesalahan saat memperbarui data.',
+                'error' => $th->getMessage(),
+                'lineerror' => $th->getLine()
             ];
-        }
+        } 
     }
 }

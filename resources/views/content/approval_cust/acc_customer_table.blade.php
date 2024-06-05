@@ -67,6 +67,7 @@
 								<label><b>Status:</b></label>
 								<select class="form-control datatable-input" data-col-index="7" id='status'>
 									<option value="all">All</option>
+									<option value="0">Pending</option>
 									<option value="1">Approved</option>
 									<option value="2">Rejected</option>
 								</select>

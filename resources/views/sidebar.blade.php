@@ -271,7 +271,17 @@
                                     <span class="menu-text">Input Pelanggaran</span>
                                 </a>
                             </li>
-                            
+                            <li class="menu-item" aria-haspopup="true">
+                                <a href="{{asset('/pelanggaran/table_view')}}" class="menu-link">
+                                    <i class="menu-bullet menu-bullet-dot">
+                                        <span></span>
+                                    </i>
+                                    <span class="menu-text">Penilaian Data Pelanggaran</span>
+                                    <!-- <span class="menu-label">
+                                        <span class="label label-danger label-inline">new</span>
+                                    </span> -->
+                                </a>
+                            </li>
                            
                         </ul>
                     </div>

@@ -49,11 +49,14 @@
                     </div>
                     <div class="card-toolbar">
                         <a href="javascript:void(0);" onclick="window.history.back();" class="btn btn-light-primary font-weight-bolder mr-2">
-                            <i class="ki ki-long-arrow-back icon-sm"></i>Back</a>
+                            <i class="ki ki-long-arrow-back icon-sm"></i>Back
+                        </a>
+                        @if(Request()->view !== '1')
                         <div class="btn-group">
                             <button type="button" class="btn btn-primary font-weight-bolder" onclick="add()" id="save_customer">
                                 <i class="ki ki-check icon-sm"></i>Save Form</button>
                         </div>
+                        @endif
                     </div>
                 </div>
                 <div class="card-body">
@@ -254,6 +257,11 @@ $(document).ready(function(){
     }
 });
 
+function validateEmail($email) {
+  var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+  return emailReg.test( $email );
+}
+
 
 function preparedit(paramid,view) {
     $.ajax({  
@@ -306,14 +314,27 @@ function add() {
 	var nama = $('#nama').val();
 	var alamat = $('#alamat').val();
 	var notelp = $('#no_telp').val();
-	var email = $('#email').val();
-    // var pesanan = getallpesananvalue();
-    // console.log({pesanan});
-    if (!nama || !alamat || !notelp || !email) {
+	var emailval = $('#email').val();
+    var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+    var email = emailReg.test( emailval );
+
+    var pesanan = getallpesananvalue();
+    console.log({pesanan});
+    if (!nama || !alamat || !notelp || !emailval) {
         swal.fire({
         position: "center",
         icon: "error",
         title: "Lengkapi Data terlebih Dahulu",
+        showConfirmButton: false,
+        timer: 1000
+         });
+        return; 
+    }
+    if(!email){
+        swal.fire({
+        position: "center",
+        icon: "error",
+        title: "Format Email Tidak Sesuai",
         showConfirmButton: false,
         timer: 1000
          });

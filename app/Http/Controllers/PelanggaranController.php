@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use DB;
 use DataTables;
 use App\Models\JenisPelanggaran;
 use App\Models\Pelanggaran;
+use App\Models\Penilaian;
 use Carbon\Carbon;
 
 
@@ -75,6 +77,7 @@ class PelanggaranController extends Controller
 
     public function pelanggaran_table_data(Request $request) {
        try {
+        // return $request;
         if (session('role') == 'Pegawai'){
         $pelanggaran = DB::table('pelanggarans as pel')
             ->join('pegawais as peg','peg.idpegawai','=','pel.pegawai_idbpegawai')
@@ -82,12 +85,22 @@ class PelanggaranController extends Controller
             ->where('pel.pegawai_idbpegawai',session('id'))
             ->select('pel.*','peg.nama_pegawai','jns.nama_pelanggaran','jns.kategori')
             ->get();
-        } else{
-        $pelanggaran = DB::table('pelanggarans as pel')
-            ->join('pegawais as peg','peg.idpegawai','=','pel.pegawai_idbpegawai')
-            ->join('jenis_pelanggarans as jns','jns.idjenis_pelanggaran','=','pel.jenis_pelanggaran_idjenis_pelanggaran')
-            ->select('pel.*','peg.nama_pegawai','jns.nama_pelanggaran','jns.kategori')
-            ->get();
+        } else {
+            if ($request->param_view == 'view') {
+                $pelanggaran = DB::table('pelanggarans as pel')
+                ->join('pegawais as peg','peg.idpegawai','=','pel.pegawai_idbpegawai')
+                ->join('jenis_pelanggarans as jns','jns.idjenis_pelanggaran','=','pel.jenis_pelanggaran_idjenis_pelanggaran')
+                ->select('pel.*','peg.nama_pegawai','jns.nama_pelanggaran','jns.kategori')
+                ->get();
+            } else {
+                $pelanggaran = DB::table('pelanggarans as pel')
+                ->join('pegawais as peg','peg.idpegawai','=','pel.pegawai_idbpegawai')
+                ->join('jenis_pelanggarans as jns','jns.idjenis_pelanggaran','=','pel.jenis_pelanggaran_idjenis_pelanggaran')
+                ->where('pel.pegawai_idbpegawai',$request->param_pegawai_idbpegawai)
+                ->select('pel.*','peg.nama_pegawai','jns.nama_pelanggaran','jns.kategori')
+                ->get();
+            }
+       
         }
 
         $pelanggaran = $pelanggaran->map(function($item) {
@@ -130,15 +143,31 @@ class PelanggaranController extends Controller
         try {
             
             if($request->hasfile('param_file')){
-                $request->file('param_file')->move('filesurat/',$request->file('param_file')->getClientOriginalName());
-                $file_name = $request->file('param_file')->getClientOriginalName();
+                $file_ext = $request->file('param_file')->getClientOriginalExtension();
+                $unq_filename=Str::uuid()->toString().'.'.$file_ext;
+                $request->file('param_file')->move('filesurat/',$unq_filename);
 
-                Pelanggaran::create([
-                    'bukti_pelanggaran' => $file_name,
+                $result = Pelanggaran::create([
+                    'bukti_pelanggaran' => $unq_filename,
                     'waktu_pelanggaran' => $request->param_tgl,
                     'pegawai_idbpegawai' => $request->param_idpeg,
                     'jenis_pelanggaran_idjenis_pelanggaran' => $request->param_idjenispel
                 ]);
+
+
+                if ($result) {
+                    $year = Carbon::now()->year;
+    
+                     Penilaian::create([
+                        'nilai' => '1',
+                        'jenis_penilaian' => 'pelanggaran',
+                        'pegawai_idpegawai' =>  $request->param_idpeg,
+                        'periode' => $year
+                    ]);
+    
+                    // return ($gas);
+    
+                }
 
                 return [
                     'success' => true,
@@ -185,36 +214,36 @@ class PelanggaranController extends Controller
         }
     }
 
-    // public function pelanggaran_edit_prepare(Request $request) {
-    //     try {
-    //         $pelanggaran = Pelanggaran::where('idpelanggaran',$request->param_id)->first();
-    //         $pathfile = "filesurat/".$pelanggaran->bukti_pelanggaran;
+    public function pelanggaran_edit_prepare(Request $request) {
+        try {
+            $pelanggaran = Pelanggaran::where('idpelanggaran',$request->param_id)->first();
+            $pathfile = "filesurat/".$pelanggaran->bukti_pelanggaran;
 
 
-    //         if(file_exists($pathfile)){
-    //             $file = url($pathfile);
-    //             $filemessage = 'File Ditemukan!';
-    //         } else {
-    //             $file = 'url_notFound';
-    //             $filemessage = 'Gagal Termukan File!!';
-    //         }
+            if(file_exists($pathfile)){
+                $file = url($pathfile);
+                $filemessage = 'File Ditemukan!';
+            } else {
+                $file = 'url_notFound';
+                $filemessage = 'Gagal Termukan File!!';
+            }
 
-    //         // Pelanggaran::where('idpelanggaran',$request->param_id)->delete();
+            // Pelanggaran::where('idpelanggaran',$request->param_id)->delete();
 
-    //         return [
-    //             'success' => true,
-    //             'message' => 'Data berhasil dihapus',
-    //             'file' => $file,
-    //             'filemessage'=> $filemessage
-    //         ];   
+            return [
+                'success' => true,
+                'message' => 'Data berhasil dihapus',
+                'file' => $file,
+                'filemessage'=> $filemessage
+            ];   
 
-    //     } catch (\Throwable $th) {
-    //         return [
-    //             'success' => false,
-    //             'message' => 'Terjadi kesalahan saat hapus data',
-    //             'error' => $th->getMessage(),
-    //             'line' => $th->getLine()
-    //         ];
-    //     }
-    // }
+        } catch (\Throwable $th) {
+            return [
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat hapus data',
+                'error' => $th->getMessage(),
+                'line' => $th->getLine()
+            ];
+        }
+    }
 }

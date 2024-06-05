@@ -67,7 +67,8 @@ Route::group(['middleware' => 'CekLogin'], function() {
     Route::get('/dashboard', function () {return view('content.dashboard');
     })->name('dashboard');
 
-    Route::post('/dashboard/chart', [DashboardController::class, 'chart'])->name('chart');
+    Route::post('/dashboard/chart1', [DashboardController::class, 'chart'])->name('chart');
+    Route::post('/dashboard/chart2', [DashboardController::class, 'chart_manager'])->name('chart_manager');
 
     
     //USER
@@ -111,7 +112,7 @@ Route::group(['middleware' => 'CekLogin'], function() {
 
 
     //PESANAN
-    Route::post('/pesanan/data_remove',[PesananController::class, 'data_remove'])->name('data_remove');
+    Route::post('/pesanan/data_remove',[TenderController::class, 'remove_pesanan'])->name('data_remove');
 
 
     //TENDER
@@ -162,6 +163,16 @@ Route::group(['middleware' => 'CekLogin'], function() {
     Route::post('/pelanggaran/remove_action',[PelanggaranController::class, 'pelanggaran_remove_action'])->name('pelanggaran_remove_action');
     Route::get('/pelanggaran/table_view',[PelanggaranController::class, 'pelanggaran_table_view'])->name('pelanggaran_table_view');
     Route::post('/pelanggaran/table_data',[PelanggaranController::class, 'pelanggaran_table_data'])->name('pelanggaran_table_data');
+
+    Route::get('/filesurat/{file}', function ($file) {
+        $path = public_path('filesurat/' . $file);
+
+        if (!File::exists($path)) {
+            abort(404);
+        }
+
+        return response()->file($path);
+    });
 
 });
 

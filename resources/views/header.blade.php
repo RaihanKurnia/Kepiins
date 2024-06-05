@@ -90,7 +90,7 @@
                             <!--begin::Title-->
                             <h4 class="d-flex flex-center rounded-top">
                                 <span class="text-white">User Notifications</span>
-                                <span class="btn btn-text btn-success btn-sm font-weight-bold btn-font-md ml-2">23 new</span>
+                                <!-- <span class="btn btn-text btn-success btn-sm font-weight-bold btn-font-md ml-2">23 new</span> -->
                             </h4>
                             <!--end::Title-->
                             <!--begin::Tabs-->
@@ -201,6 +201,7 @@ $(document).ready(function() {
         var notification = {
             name: data.cust.nama_pegawai,
             timestamp: timestamp
+            pesan:data.cust.pesan,
         };
         appendNotification(notification);
         storeNotification(notification);
@@ -219,7 +220,7 @@ $(document).ready(function() {
                         </div>
                         <div class="navi-text">
                             <div class="font-weight-bold">Waiting Approval <span class="text-muted">(${notification.timestamp})</span></div>
-                            <div class="text-muted"><b>${notification.name}</b> telah menambahkan customer Baru</div>
+                            <div class="text-muted"><b>${notification.name}</b> ${notification.pesan}</div>
                         </div>
                     </div>
                 </a>

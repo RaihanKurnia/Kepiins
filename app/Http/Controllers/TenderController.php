@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use App\Events\CustomerNotification;
 use App\Models\Pegawai;
 use App\Models\Barang;
+use App\Models\Penilaian;
 
 
 class TenderController extends Controller
@@ -136,7 +137,7 @@ class TenderController extends Controller
         }
     }
 
-    public function tender_avg_search(Request $request){
+    public function tender_avg_search_backup(Request $request){
         // dd($request);
         try{
             //select all tender    
@@ -173,6 +174,7 @@ class TenderController extends Controller
             $filteredPesanans = $pesanans->filter(function ($pesanan) {
                 return $pesanan['status_app_pesanan'] == '1';
             });
+            // return $request->param_status;
 
             $totalorder = $pesanans->sum('jumlah_order');
             $totalorderacc = $filteredPesanans->sum('jumlah_order');
@@ -194,10 +196,81 @@ class TenderController extends Controller
                 'totalorderacc'=>$totalorderacc,
                 'poin'=>$poin
             ]);
-        }catch (\Exception $e){
+        }catch (\Throwable $th){
             return [
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat pengambilan data'
+                'message' => 'Terjadi kesalahan saat pengambilan data',
+                'pesan' => $th->getMessage()
+
+            ];
+        }
+    }
+
+    public function tender_avg_search(Request $request){
+        // dd($request);
+        try{
+            //select all tender    
+            $pesanans = Pesanan::with(['customer.pegawai', 'barang'])
+            ->when($request->param_custname, function ($query) use ($request) {
+                return $query->whereHas('customer', function ($query) use ($request) {
+                    return $query->where('idpegawai_input', $request->param_custname);
+                });
+            })
+            ->when(isset($request->param_barang), function ($query) use ($request) {
+                return $query->where('barang_idbarang', $request->param_barang);
+            })
+            ->when(isset($request->param_status), function ($query) use ($request) {
+                return $query->where('status_app_pesanan', $request->param_status);
+            })
+            ->get()
+            ->map(function ($pesanan) {
+                return [
+                    'id_pesanan' =>$pesanan->id_pesanan,
+                    'nama_pegawai' => $pesanan->customer->pegawai->nama_pegawai,
+                    'nama_customer' => $pesanan->customer->nama_customer,
+                    'email' => $pesanan->customer->email,
+                    'nomor_telefon' => $pesanan->customer->nomor_telefon,
+                    'pengiriman_idpengiriman' => $pesanan->pengiriman_idpengiriman,
+                    'nama_barang' => $pesanan->barang->nama_barang,
+                    'jumlah_order' => $pesanan->jumlah_order,
+                    'tanggal_pemesanan' => Carbon::parse($pesanan->tanggal_pemesanan)->format('Y-m-d'),
+                    'tanggal_pengiriman' => Carbon::parse($pesanan->tanggal_pengiriman)->format('Y-m-d'),
+                    'status_app_pesanan' => $pesanan->status_app_pesanan,
+                ];
+            });
+            
+                 
+            $filteredPesanans = $pesanans->filter(function ($pesanan) {
+                return $pesanan['status_app_pesanan'] == '1';
+            });
+            // return $request->param_status;
+
+            $totalorder = $pesanans->sum('jumlah_order');
+            $totalorderacc = $filteredPesanans->sum('jumlah_order');
+
+            if ($totalorderacc == 0){
+                $poin = 0;
+            }else if($totalorderacc <300){
+                $poin = 5;
+            } else if ($totalorderacc >= 300 && $totalorderacc <=1500){
+                $poin = 7;
+            } else {
+                $poin = 9;
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $pesanans,
+                'totalorder' =>$totalorder,
+                'totalorderacc'=>$totalorderacc,
+                'poin'=>$poin
+            ]);
+        }catch (\Throwable $th){
+            return [
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat pengambilan data',
+                'pesan' => $th->getMessage()
+
             ];
         }
     }
@@ -376,6 +449,7 @@ class TenderController extends Controller
         DB::commit();
 
         $result->nama_pegawai= session('nama') ;
+        $result->pesan = 'telah menambahkan Tander Baru';
         $getnotif = $result->getAttributes();
         event (new CustomerNotification($getnotif));
         
@@ -392,6 +466,38 @@ class TenderController extends Controller
             ];
         };
     }
+
+    public function remove_pesanan(Request $request){
+        try {
+
+            $pesanan = Pesanan::where('id_pesanan', $request->param_id)->first();
+            $pesananstatus = $pesanan->status_app_pesanan;
+
+            if($pesananstatus !== 0){
+                $pesanan->delete();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Customer berhasil dihapus.'
+                ]);
+            }else{
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal Hapus!!! Status Pesanan Approved',
+                ]);
+            }
+            
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menghapus customer',
+                'error' => $th->getMessage()
+            ], 500);
+        }
+       
+
+
+    }
+
     //APPROVAL TENDER
 
     public function tender_approval() {
@@ -462,12 +568,31 @@ class TenderController extends Controller
     {
         // dump($request);
         DB::beginTransaction();
+       
         try {
+            $year = Carbon::now()->year;
             $result = Pesanan::where('id_pesanan', $request->param_ord)
             ->update([
                 'status_app_pesanan'=> $request->param_triger
                 
             ]);
+
+            if ($result) {
+                $nilai = Pesanan::select('pesanans.*','customers.idpegawai_input')
+                ->where('pesanans.id_pesanan', $request->param_ord)
+                ->join('customers','pesanans.customer_idcustomer','=','customers.idcustomer')
+                ->first();
+                
+                // return [$nilai,$year];
+
+                Penilaian::create([
+                    'nilai' => $nilai->jumlah_order,
+                    'jenis_penilaian' => 'tender',
+                    'pegawai_idpegawai' =>  $nilai->idpegawai_input,
+                    'periode' => $year
+                ]);
+
+            }
 
             DB::commit();
             return [
@@ -475,13 +600,16 @@ class TenderController extends Controller
                 'message' => 'Data berhasil disimpan.'
             ];
 
-        }catch (\Exception $e) {
+        }catch (\Throwable $th) {
             DB::rollback();
             return [
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat memperbarui data.'
+                'message' => 'Terjadi kesalahan saat memperbarui data.',
+                'error' => $th->getMessage(),
+                'lineerror' => $th->getLine()
             ];
         } 
+
     }
    
 }

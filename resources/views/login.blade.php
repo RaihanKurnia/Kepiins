@@ -206,7 +206,7 @@
 								title: 'Login Berhasil!',
 								html: 'Anda akan di arahkan dalam beberapa detik.',
 								icon: 'success',
-								timer: 2000,
+								timer: 1000,
 								timerProgressBar: true,
 								showConfirmButton: false,
 								didOpen: () => {
@@ -217,13 +217,14 @@
 									}, 100)
 								},
 								willClose: () => {
-									clearInterval(timerInterval)
+									clearInterval(timerInterval);
 								}
 							}).then((result) => {
 								if (result.dismiss === Swal.DismissReason.timer) {
 								window.location.href = "{{ route('dashboard') }}";
 								}
-							})
+							});
+							
 							
 						}
 					},
