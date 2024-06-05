@@ -349,7 +349,7 @@ function add() {
             param_nama:nama,
             param_alamat:alamat,
 			param_notelpt:notelp,
-			param_email:email
+			param_email:emailval
             },
         dataType : "json",
         async : false,
