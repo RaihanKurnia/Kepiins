@@ -20,17 +20,20 @@ class CustomerController extends Controller
         return view('content.customer.customer_add');
     }
 
-    public function customer_json()
+    public function customer_json(Request $request)
     {
         $customer = DB::table('customers')
+        ->where(DB::raw('QUARTER(created_at)'),$request->param_quarter)
         ->where('idpegawai_input', session('id'))
         ->get();
 
         $totalcust = DB::table('customers')
+        ->where(DB::raw('QUARTER(created_at)'),$request->param_quarter)
         ->where('idpegawai_input', session('id'))
         ->count();
 
         $totalcustacc = DB::table('customers')
+        ->where(DB::raw('QUARTER(created_at)'),$request->param_quarter)
         ->where('idpegawai_input', session('id'))
         ->where('status_app_data_customer', '1')
         ->count();
@@ -288,18 +291,21 @@ class CustomerController extends Controller
             if ($request->param_custname == null){
                 $getcustomer = DB::table('customers')
                 ->where('status_app_data_customer', $request->param_status)
+                ->where(DB::raw('QUARTER(created_at)'),$request->param_quarter)
                 ->get();
 
                 return response()->json(['data' => $getcustomer]);
             } else if ($request->param_status == 'all'){
                 $getcustomer = DB::table('customers')
                 ->where('nama_customer', 'like', '%' .$request->param_custname. '%')
+                ->where(DB::raw('QUARTER(created_at)'),$request->param_quarter)
                 ->get();
 
                 return response()->json(['data' => $getcustomer]);
             }else {
                 $getcustomer = DB::table('customers')
                 ->where('nama_customer', 'like', '%' .$request->param_custname. '%')
+                ->where(DB::raw('QUARTER(created_at)'),$request->param_quarter)
                 ->where('status_app_data_customer', $request->param_status)
                 ->get();
                 
@@ -427,12 +433,14 @@ class CustomerController extends Controller
                     ->groupBy(DB::raw('YEAR(created_at)'), DB::raw('QUARTER(created_at)'))
                     ->get();
 
-                    if ($jumlahcust[0]->total_customers < 30) {
-                        $nilai = 5;
-                    } elseif ($jumlahcust[0]->total_customers >= 30 && $jumlahcust[0]->total_customers <= 60) {
-                        $nilai = 7;
-                    } else {
-                        $nilai = 9;
+                    foreach ($jumlahcust as $jumlahcust_nilai) {
+                        if ($jumlahcust_nilai->total_customers < 30) {
+                            $nilai = 5;
+                        } elseif ($jumlahcust_nilai->total_customers >= 30 && $jumlahcust_nilai->total_customers <= 60) {
+                            $nilai = 7;
+                        } else {
+                            $nilai = 9;
+                        }
                     }
 
                     //cek apakh sudah ada que dan year yg sama

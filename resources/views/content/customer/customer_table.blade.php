@@ -79,7 +79,7 @@
 							<div class="row align-items-center">
 								<div class="col-lg-9 col-xl-8">
 									<div class="row ">
-										<div class="col-md-4 my-2 my-md-0">
+										<div class="col-md-3 my-2 my-md-0">
 											<div class="input-icon">
 												<input type="text" class="form-control" placeholder="Cari Nama Customer" id="kt_datatable_search_query" />
 												<span>
@@ -87,7 +87,7 @@
 												</span>
 											</div>
 										</div>
-										<div class="col-md-4 my-2 my-md-0">
+										<div class="col-md-3 my-2 my-md-0">
 											<div class="d-flex align-items-center">
 												<label class="mr-3 mb-0 d-none d-md-block">Status:</label>
 												<select class="form-control" id="kt_datatable_search_status">
@@ -98,8 +98,19 @@
 												</select>
 											</div>
 										</div>
-									
-										<div class="col-md-4 my-2 my-md-0">
+										<div class="col-md-3 my-2 my-md-0">
+											<div class="d-flex align-items-center">
+												<label class="mr-3 mb-0 d-none d-md-block">Periode:</label>
+												<select class="form-control datatable-input" data-col-index="7" id='periode'>
+													<option value="1">Periode 1</option>
+													<option value="2">Periode 2</option>
+													<option value="3">Periode 3</option>
+													<option value="4">Periode 4</option>
+												</select>
+											</div>
+										</div>
+										
+										<div class="col-md-3 my-2 my-md-0">
 										<a href="#" onclick="cari()" class="btn btn-light-success px-6 font-weight-bold">Search</a>
 										</div>
 									</div>
@@ -197,11 +208,14 @@
 	<script type="text/javascript">
 
 		$(document).ready(function(){
-			refreshTable();
+			var quarterRoman = ["1","2","3","4"][Math.floor((new Date().getMonth()) / 3)];
+		// var querter = new Date().getFullYear();
+			$('#periode').val(quarterRoman);
+			refreshTable(quarterRoman);
 		});
 
 
-		function refreshTable(){
+		function refreshTable(quarterRoman){
 			$('#kt_datatable1').DataTable({
 				"bDestroy": true,
 				"responsive":true,
@@ -212,6 +226,10 @@
 				responsive: true,
 				ajax: {
 				url: "{{route('customer_json')}}",
+				data: {
+					"_token": "{{ csrf_token() }}",
+					param_quarter:quarterRoman
+				},
 					error: function(xhr, errorType, thrownError) {
 						$('.dataTables_empty').text("No data available in table");
 						console.error("Kesalahan AJAX:", thrownError);
@@ -282,7 +300,7 @@
 			});
 		};
 
-		function searchtable(custname,status){
+		function searchtable(custname,status,quarterRoman){
 			$('#kt_datatable1').DataTable({
 				"bDestroy": true,
 				"responsive":true,
@@ -297,7 +315,8 @@
 					data: {
 						"_token": "{{ csrf_token() }}",
 						param_custname:custname,
-						param_status:status
+						param_status:status,
+						param_quarter:quarterRoman
 					},
 					error: function(xhr, errorType, thrownError) {
 						$('.dataTables_empty').text("No data available in table");
@@ -365,11 +384,12 @@
 		function cari() {
 			var custname = $('#kt_datatable_search_query').val();
 			var status = $('#kt_datatable_search_status').val();
+			var periode = $('#periode').val();
 
 			if (custname == '' && status == 'all'){
-				refreshTable();
+				refreshTable(periode);
 			} else{
-				searchtable(custname,status);
+				searchtable(custname,status,periode);
 			}
 
 

@@ -24,13 +24,16 @@ class TenderController extends Controller
         return view('content.tender.tender_add');
     }
 
-    public function tender_json() {
+    public function tender_json(Request $request) {
         try{
-            //select all tender    
+            //select all tender   
+            
+            // return $request;
             $pesanans = Pesanan::with(['customer.pegawai', 'barang'])
                 ->whereHas('customer', function ($query) {
                     $query->where('idpegawai_input', session('id'));
                 })
+                ->where(DB::raw('QUARTER(STR_TO_DATE(tanggal_pemesanan, "%Y-%m-%d"))') ,$request->param_quarter)
                 ->get()
                 ->map(function ($pesanan) {
                     return [
@@ -73,10 +76,12 @@ class TenderController extends Controller
                 'totalorderacc'=>$totalorderacc,
                 'poin'=>$poin
             ]);
-        }catch (\Exception $e){
+        }catch (\Throwable $th){
             return [
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat pengambilan data'
+                'message' => 'Terjadi kesalahan saat pengambilan data',
+                'error' => $th->getMessage(),
+                'lineerror' => $th->getLine()
             ];
         }
 
@@ -403,6 +408,7 @@ class TenderController extends Controller
             ->where('status_app_pesanan', 'like', '%'.$request->param_status.'%')
             ->where('customer_idcustomer', 'like', '%'.$request->param_custname.'%')
             ->where('barang_idbarang', 'like', '%'.$request->param_barang.'%')
+            ->where(DB::raw('QUARTER(STR_TO_DATE(tanggal_pemesanan, "%Y-%m-%d"))') ,$request->param_quarter)
             ->get()
             ->map(function ($pesanan) {
                 return [
@@ -580,7 +586,7 @@ class TenderController extends Controller
 
             if ($result) {
                 $tenderacc = Pesanan::select('pesanans.*','customers.idpegawai_input')
-                ->where('pesanans.id_pesanan', $result->param_ord)
+                ->where('pesanans.id_pesanan', $request->param_ord)
                 ->join('customers','pesanans.customer_idcustomer','=','customers.idcustomer')
                 ->first();
 
@@ -602,15 +608,28 @@ class TenderController extends Controller
 
                     
 
-                    // return $jumlahorder[0]->jumlah_order;
-                    
-                    if ($jumlahorder[0]->jumlah_order < 300) {
-                        $nilai = 5;
-                    } elseif ($jumlahorder[0]->jumlah_order >= 300 && $jumlahorder[0]->jumlah_order <= 1500) {
-                        $nilai = 7;
-                    } else {
-                        $nilai = 9;
+                    // return $jumlahorder;
+                    foreach ($jumlahorder as $jumlahorder_nilai) {
+                        if ($jumlahorder_nilai->jumlah_order < 300) {
+                            $nilai = 5;
+                        } elseif ($jumlahorder_nilai->jumlah_order >= 300 && $jumlahorder_nilai->jumlah_order <= 1500) {
+                            $nilai = 7;
+                        } else {
+                            $nilai = 9;
+                        }
                     }
+
+                    // return $nilai;
+                    
+                    // if ($jumlahorder[0]->jumlah_order < 300) {
+                    //     $nilai = 5;
+                    // } elseif ($jumlahorder[0]->jumlah_order >= 300 && $jumlahorder[0]->jumlah_order <= 1500) {
+                    //     $nilai = 7;
+                    // } else {
+                    //     $nilai = 9;
+                    // }
+
+                    // return [$nilai];
 
                      //cek apakh sudah ada que dan year yg sama
                      $tendernilai = Penilaian::where('pegawai_idpegawai', $tenderacc->idpegawai_input)

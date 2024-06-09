@@ -70,8 +70,6 @@
 								<!--end::Svg Icon-->
 							</span>New Record</a>
 							<!--end::Button-->
-
-							
 						</div>
 					</div>
 					<div class="card-body">
@@ -98,6 +96,15 @@
 										<option value="0">Pending</option>
 										<option value="1">Approved</option>
 										<option value="2">Rejected</option>
+									</select>
+								</div>
+								<div class="col-lg-3 mb-lg-0 mb-6">
+									<label><b>Periode:</b></label>
+									<select class="form-control datatable-input" data-col-index="7" id='periode'>
+										<option value="1">Periode 1</option>
+										<option value="2">Periode 2</option>
+										<option value="3">Periode 3</option>
+										<option value="4">Periode 4</option>
 									</select>
 								</div>
 							</div>
@@ -230,9 +237,11 @@
 	<script type="text/javascript">
 
 	$(document).ready(function(){
-		refreshTable();
+		var quarterRoman = ["1","2","3","4"][Math.floor((new Date().getMonth()) / 3)];
+		// var querter = new Date().getFullYear();
+		$('#periode').val(quarterRoman);
+		refreshTable(quarterRoman);
 		search_data();
-
 	});
 	
 	$('#customer, #barang, #status').change(function() {
@@ -274,17 +283,18 @@
 		var custname = $('#customer').val();
 		var barang = $('#barang').val();
 		var status = $('#status').val();
+		var periode = $('#periode').val();
 		// searchTable(custname,barang,status)
 
 		if (custname == 'all' && barang== 'all' && status == 'all'){
-			refreshTable();
+			refreshTable(periode);
 		} else {
-			searchTable(custname,barang,status)
+			searchTable(custname,barang,status,periode)
 		}
 	}
 
 
-	function searchTable(custname,barang,status) {
+	function searchTable(custname,barang,status,periode) {
 		// console.log('masuk sini');
 		$('#kt_datatable1').DataTable({
 			"bDestroy": true,
@@ -302,7 +312,8 @@
 					"_token": "{{csrf_token()}}",
 					param_custname:custname == "all" ? "" : custname,
 					param_barang:barang == "all" ? "" : barang,
-					param_status:status == "all" ? "" : status
+					param_status:status == "all" ? "" : status,
+					param_quarter:periode
 				},
 				error: function(xhr, errorType, thrownError) {
 					$('.dataTables_empty').text("No data available in table");
@@ -371,7 +382,13 @@
 		
 	}
 
-	function refreshTable(){
+	$('#periode').on('change', function(){
+    var selectedOption = $(this).val();
+    refreshTable(selectedOption);
+  });
+
+	function refreshTable(quarter){
+		// render_chart(quarterRoman);
 		$('#kt_datatable1').DataTable({
 			"bDestroy": true,
 			"responsive":true,
@@ -383,6 +400,10 @@
 			// ajax: "{{url('/pegawai/data_json')}}",
 			ajax: {
 				url: "{{route('tender_json')}}",
+				data: {
+				"_token": "{{ csrf_token() }}",
+				param_quarter:quarter
+				},
 				error: function(xhr, errorType, thrownError) {
 					$('.dataTables_empty').text("No data available in table");
 					Swal.fire(
