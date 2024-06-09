@@ -67,9 +67,9 @@ class CustomerController extends Controller
 
             // dd($request);
 
-            if ($param_peg != null || $param_status != null ){
-                
-                $customerquery = DB::table('customers');
+            if ($param_peg != null || $param_status != null  ){
+                $customerquery = DB::table('customers')
+                ->where(DB::raw('QUARTER(created_at)'),$request->param_quarter);
                 
                 if ($param_peg !== null){
                     $customerquery->where('idpegawai_input', $param_peg);
@@ -77,6 +77,7 @@ class CustomerController extends Controller
                 if ($param_status !== null){
                     $customerquery->where('status_app_data_customer', $param_status);
                 }
+
                 $customer=$customerquery->get();
                 $totalcust = $customerquery->count();
         
@@ -97,9 +98,11 @@ class CustomerController extends Controller
                 }
             } else {
                 $customer = DB::table('customers')
+                ->where(DB::raw('QUARTER(created_at)'),$request->param_quarter)
                 ->get();
         
                 $totalcust = DB::table('customers')
+                ->where(DB::raw('QUARTER(created_at)'),$request->param_quarter)
                 ->count();
         
                 // $totalcustacc = DB::table('customers')
@@ -107,11 +110,13 @@ class CustomerController extends Controller
                 // ->count();
 
                 $totalcustaccperpeg = DB::table('customers')
+                ->where(DB::raw('QUARTER(created_at)'),$request->param_quarter)
                 ->where('status_app_data_customer', '1')
                 ->distinct()
                 ->count('idpegawai_input');
 
                 $totalcustacc = DB::table('customers')
+                ->where(DB::raw('QUARTER(created_at)'),$request->param_quarter)
                 ->where('status_app_data_customer', '1')
                 ->count();
                 

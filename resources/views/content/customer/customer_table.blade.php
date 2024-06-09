@@ -13,15 +13,15 @@
 					<!--begin::Page Heading-->
 					<div class="d-flex align-items-baseline mr-5">
 						<!--begin::Page Title-->
-						<h5 class="text-dark font-weight-bold my-2 mr-5">Customer</h5>
+						<h5 class="text-dark font-weight-bold my-2 mr-5">Penilaian Data Customer</h5>
 						<!--end::Page Title-->
 						<!--begin::Breadcrumb-->
 						<ul class="breadcrumb breadcrumb-transparent breadcrumb-dot font-weight-bold p-0 my-2 font-size-sm">
 							<li class="breadcrumb-item">
-								<a href="" class="text-muted">Data Master</a>
+								<a href="" class="text-muted">Hasil Penilaian</a>
 							</li>
 							<li class="breadcrumb-item">
-								<a href="" class="text-muted">Customer</a>
+								<a href="" class="text-muted">Penilaian Data Customer</a>
 							</li>
 						</ul>
 						<!--end::Breadcrumb-->
@@ -50,8 +50,8 @@
 				<div class="card card-custom gutter-b">
 					<div class="card-header flex-wrap border-0 pt-6 pb-0">
 						<div class="card-title">
-							<h3 class="card-label">Master Data Table Customer
-							<span class="d-block text-muted pt-2 font-size-sm">Data Table Customer</span></h3>
+							<h3 class="card-label">Table Penilaian Data Customer
+							<span class="d-block text-muted pt-2 font-size-sm">Data Table Penilaian Customer</span></h3>
 						</div>
 						<div class="card-toolbar">
 							<!-- begin::Dropdown-->
@@ -530,6 +530,16 @@
 										<option value="2">Rejected</option>
 									</select>
 								</div>
+								<div class="col-lg-3 mb-lg-0 mb-6">
+									<label><b>Periode:</b></label>
+									<select class="form-control datatable-input" data-col-index="7" id='periode'>
+										<option value="1">Periode 1</option>
+										<option value="2">Periode 2</option>
+										<option value="3">Periode 3</option>
+										<option value="4">Periode 4</option>
+									</select>
+								</div>
+								
 							</div>
 						</div>
 
@@ -622,26 +632,31 @@
 	<script type="text/javascript">
 
 		$(document).ready(function(){
-			refreshTable();
+			var quarterRoman = ["1","2","3","4"][Math.floor((new Date().getMonth()) / 3)];
+		// var querter = new Date().getFullYear();
+			$('#periode').val(quarterRoman);
+			refreshTable(quarterRoman);
 			pegawai_data();
 		});
 
-		$('#pegawai, #status').change(function() {
+		$('#pegawai, #status,#periode').change(function() {
 			var pegawai = $('#pegawai').val();
 			var status = $('#status').val();
+			var periode = $('#periode').val();
 
-			// console.log({pegawai});
+			console.log({status});
 			// console.log({status});
 			// searchTable(custname,barang,status)
-			if (pegawai == 'all' && status == 'all'){
-				refreshTable();
+			if (pegawai == 'all' && status == 'all' && periode != ''){
+				refreshTable(periode);
 			} else {
-				searchtable(pegawai,status)
+				searchtable(pegawai,status,periode)
+				console.log('halo');
 			}
 		});
 
 
-		function refreshTable(){
+		function refreshTable(periode){
 			$('#kt_datatable1').DataTable({
 				"bDestroy": true,
 				"responsive":true,
@@ -656,7 +671,8 @@
 				data: {
 					"_token": "{{ csrf_token() }}",
 					param_peg:'',
-					param_status:''
+					param_status:'',
+					param_quarter:periode
 				},
 					error: function(xhr, errorType, thrownError) {
 						$('.dataTables_empty').text("No data available in table");
@@ -705,7 +721,7 @@
 			});
 		};
 
-		function searchtable(pegawai,status){
+		function searchtable(pegawai,status,periode){
 			$('#kt_datatable1').DataTable({
 				"bDestroy": true,
 				"responsive":true,
@@ -720,7 +736,8 @@
 					data: {
 						"_token": "{{ csrf_token() }}",
 						param_peg:pegawai === "all" ? "" : pegawai,
-						param_status:status === "all" ? "" : status
+						param_status:status === "all" ? "" : status,
+						param_quarter:periode
 					},
 					error: function(xhr, errorType, thrownError) {
 						$('.dataTables_empty').text("No data available in table");

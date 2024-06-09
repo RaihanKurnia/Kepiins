@@ -428,6 +428,15 @@
 										<option value="all" selected>All </option>
 									</select>
 								</div>
+								<div class="col-lg-3 mb-lg-0 mb-6">
+									<label><b>Periode:</b></label>
+									<select class="form-control datatable-input" data-col-index="7" id='periode'>
+										<option value="1">Periode 1</option>
+										<option value="2">Periode 2</option>
+										<option value="3">Periode 3</option>
+										<option value="4">Periode 4</option>
+									</select>
+								</div>
 							</div>
 						</div>
 
@@ -507,21 +516,25 @@
 	<script type="text/javascript">
 
 		$(document).ready(function(){
-			refreshTable();
+			var quarterRoman = ["1","2","3","4"][Math.floor((new Date().getMonth()) / 3)];
+			// var querter = new Date().getFullYear();
+			$('#periode').val(quarterRoman);
+			refreshTable(quarterRoman);
             pegawai_data();
 		});
 
-        $('#pegawai').change(function() {
+        $('#pegawai,#periode').change(function() {
 			var pegawai = $('#pegawai').val();
+			var periode = $('#periode').val();
 		
 
 			// console.log({pegawai});
 			// console.log({status});
 			// searchTable(custname,barang,status)
-			if (pegawai == 'all'){
-				refreshTable();
+			if (pegawai == 'all' && periode != null){
+				refreshTable(periode);
 			} else {
-				searchtable(pegawai)
+				searchtable(pegawai,periode)
 			}
 		});
 
@@ -556,7 +569,7 @@
 		}
 
 
-		function refreshTable(){
+		function refreshTable(periode){
 			$('#kt_datatable1').DataTable({
 				"bDestroy": true,
 				"responsive":true,
@@ -570,7 +583,8 @@
                 type : "post",
                 data: {
 						"_token": "{{ csrf_token() }}",
-                        param_view: 'view'
+                        param_view: 'view',
+						param_quarter:periode
                 },
 					error: function(xhr, errorType, thrownError) {
 						$('.dataTables_empty').text("No data available in table");
@@ -618,7 +632,7 @@
 			});
 		};
 
-		function searchtable(pegawai){
+		function searchtable(pegawai,periode){
 			$('#kt_datatable1').DataTable({
 				"bDestroy": true,
 				"responsive":true,
@@ -634,6 +648,7 @@
 						"_token": "{{ csrf_token() }}",
                         param_view: 'search',
 						param_pegawai_idbpegawai:pegawai,
+						param_quarter:periode
 					},
 					error: function(xhr, errorType, thrownError) {
 						$('.dataTables_empty').text("No data available in table");

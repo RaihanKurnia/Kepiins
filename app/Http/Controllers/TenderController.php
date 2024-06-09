@@ -94,6 +94,7 @@ class TenderController extends Controller
                 // ->whereHas('customer', function ($query) {
                 //     $query->where('idpegawai_input', session('id'));
                 // })
+                ->where(DB::raw('QUARTER(STR_TO_DATE(tanggal_pemesanan, "%Y-%m-%d"))') ,$request->param_quarter)
                 ->get()
                 ->map(function ($pesanan) {
                     return [
@@ -119,7 +120,9 @@ class TenderController extends Controller
             $totalorder = $pesanans->sum('jumlah_order');
             $totalorderacc = $filteredPesanans->sum('jumlah_order');
 
-            if($totalorderacc <300){
+            if ($totalorderacc == 0){
+                $poin = 0;
+            }else if($totalorderacc <300){
                 $poin = 5;
             } else if ($totalorderacc >= 300 && $totalorderacc <=1500){
                 $poin = 7;
@@ -216,6 +219,7 @@ class TenderController extends Controller
         try{
             //select all tender    
             $pesanans = Pesanan::with(['customer.pegawai', 'barang'])
+            ->where(DB::raw('QUARTER(STR_TO_DATE(tanggal_pemesanan, "%Y-%m-%d"))') ,$request->param_quarter)
             ->when($request->param_custname, function ($query) use ($request) {
                 return $query->whereHas('customer', function ($query) use ($request) {
                     return $query->where('idpegawai_input', $request->param_custname);
