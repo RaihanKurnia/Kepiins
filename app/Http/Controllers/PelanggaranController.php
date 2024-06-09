@@ -86,7 +86,7 @@ class PelanggaranController extends Controller
             ->join('jenis_pelanggarans as jns','jns.idjenis_pelanggaran','=','pel.jenis_pelanggaran_idjenis_pelanggaran')
             ->where(DB::raw('QUARTER(STR_TO_DATE(waktu_pelanggaran, "%Y-%m-%d"))') ,$request->param_quarter)
             ->where('pel.pegawai_idbpegawai',session('id'))
-            ->select('pel.*','peg.nama_pegawai','jns.nama_pelanggaran','jns.kategori')
+            ->select('pel.*','peg.nama_pegawai','jns.nama_pelanggaran','jns.kategori','jns.bobot_pelanggaran')
             ->get();
         } else {
             if ($request->param_view == 'view') {
@@ -94,7 +94,7 @@ class PelanggaranController extends Controller
                 ->join('pegawais as peg','peg.idpegawai','=','pel.pegawai_idbpegawai')
                 ->join('jenis_pelanggarans as jns','jns.idjenis_pelanggaran','=','pel.jenis_pelanggaran_idjenis_pelanggaran')
                 ->where(DB::raw('QUARTER(STR_TO_DATE(waktu_pelanggaran, "%Y-%m-%d"))') ,$request->param_quarter)
-                ->select('pel.*','peg.nama_pegawai','jns.nama_pelanggaran','jns.kategori')
+                ->select('pel.*','peg.nama_pegawai','jns.nama_pelanggaran','jns.kategori','jns.bobot_pelanggaran')
                 ->get();
             } else {
                 $pelanggaran = DB::table('pelanggarans as pel')
@@ -102,7 +102,7 @@ class PelanggaranController extends Controller
                 ->join('jenis_pelanggarans as jns','jns.idjenis_pelanggaran','=','pel.jenis_pelanggaran_idjenis_pelanggaran')
                 ->where(DB::raw('QUARTER(STR_TO_DATE(waktu_pelanggaran, "%Y-%m-%d"))') ,$request->param_quarter)
                 ->where('pel.pegawai_idbpegawai',$request->param_pegawai_idbpegawai)
-                ->select('pel.*','peg.nama_pegawai','jns.nama_pelanggaran','jns.kategori')
+                ->select('pel.*','peg.nama_pegawai','jns.nama_pelanggaran','jns.kategori','jns.bobot_pelanggaran')
                 ->get();
             }
        
@@ -114,16 +114,35 @@ class PelanggaranController extends Controller
             return $item;
         });
 
-        $totalpelanggaran = $pelanggaran->count();
+        // return $pelanggaran;
 
-        if($totalpelanggaran == 0){
-            $poin = 9;
+        $totalpelanggaran = $pelanggaran->count();
+        // $bobot = $pelanggaran->bobot_pelanggaran;
+
+
+        // return $pelanggaran;
+        foreach ($pelanggaran as $sumbobot) {
+            if ($sumbobot->bobot_pelanggaran >= 15 && $sumbobot->bobot_pelanggaran <= 29) {
+                $poin = 7;
+            } else if ($sumbobot->bobot_pelanggaran >= 30 && $sumbobot->bobot_pelanggaran <= 44) {
+                $poin = 5;
+            } else if ($sumbobot->bobot_pelanggaran >= 45 && $sumbobot->bobot_pelanggaran <= 59) {
+                $poin = 3; 
+            } else {
+                $poin = 0;
+            }
         }
-        else if($totalpelanggaran <= 2){
-            $poin = 7;
-        } else {
-            $poin = 5;
-        }
+        // return $poin;
+
+
+        // if($totalpelanggaran == 0){
+        //     $poin = 9;
+        // }
+        // else if($totalpelanggaran <= 2){
+        //     $poin = 7;
+        // } else {
+        //     $poin = 5;
+        // }
 
 
         return response()->json([
