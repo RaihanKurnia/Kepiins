@@ -161,6 +161,7 @@ class TenderController extends Controller
             ->when($request->param_status, function ($query) use ($request) {
                 return $query->where('status_app_pesanan', $request->param_status);
             })
+            ->where(DB::raw('QUARTER(STR_TO_DATE(tanggal_pemesanan, "%Y-%m-%d"))') ,$request->param_quarter)
             ->get()
             ->map(function ($pesanan) {
                 return [
@@ -518,10 +519,11 @@ class TenderController extends Controller
         return view('content.approval_tender.acc_tender_add');
     }
 
-    public function tender_approval_json() {
+    public function tender_approval_json(Request $request) {
         try{
             //select all tender    
             $pesanans = Pesanan::with(['customer.pegawai', 'barang'])
+            ->where(DB::raw('QUARTER(STR_TO_DATE(tanggal_pemesanan, "%Y-%m-%d"))') ,$request->param_quarter)
                 ->get()
                 ->map(function ($pesanan) {
                     return [
@@ -544,10 +546,12 @@ class TenderController extends Controller
                 'success' => true,
                 'data' => $pesanans,
             ]);
-        }catch (\Exception $e){
+        }catch (\Throwable $th){
             return [
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat pengambilan data'
+                'message' => 'Terjadi kesalahan saat pengambilan data',
+                'error' => $th->getMessage(),
+                'lineerror' => $th->getLine()
             ];
         }
     }
