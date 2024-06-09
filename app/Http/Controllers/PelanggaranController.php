@@ -180,15 +180,17 @@ class PelanggaranController extends Controller
                     }
 
                     $sumbobot= $jumlahbobot[0]->jmlbobot;
-
-                    if ($sumbobot >= 15) {
-                        $nilai = 7;
-                    } elseif ($sumbobot >= 30 && $sumbobot <= 44) {
-                        $nilai = 5;
-                    } elseif ($sumbobot >= 45 && $sumbobot <= 59) {
-                        $nilai = 4; 
-                    } else {
-                        $nilai = 0;
+                    
+                    foreach ($jumlahbobot as $sumbobot) {
+                        if ($sumbobot >= 15) {
+                            $nilai = 7;
+                        } elseif ($sumbobot >= 30 && $sumbobot <= 44) {
+                            $nilai = 5;
+                        } elseif ($sumbobot >= 45 && $sumbobot <= 59) {
+                            $nilai = 4; 
+                        } else {
+                            $nilai = 0;
+                        }
                     }
                     
                      //cek apakh sudah ada quater dan year yg sama
