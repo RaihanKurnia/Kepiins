@@ -187,7 +187,7 @@ class PelanggaranController extends Controller
                         } elseif ($sumbobot >= 30 && $sumbobot <= 44) {
                             $nilai = 5;
                         } elseif ($sumbobot >= 45 && $sumbobot <= 59) {
-                            $nilai = 4; 
+                            $nilai = 3; 
                         } else {
                             $nilai = 0;
                         }
