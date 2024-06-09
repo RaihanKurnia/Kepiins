@@ -580,7 +580,7 @@ class TenderController extends Controller
 
             if ($result) {
                 $tenderacc = Pesanan::select('pesanans.*','customers.idpegawai_input')
-                ->where('pesanans.id_pesanan', $result->id_pesanan)
+                ->where('pesanans.id_pesanan', $result->param_ord)
                 ->join('customers','pesanans.customer_idcustomer','=','customers.idcustomer')
                 ->first();
 
