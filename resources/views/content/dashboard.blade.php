@@ -212,7 +212,8 @@
 
   $(document).ready(function(){
     var quarterRoman = ["","I","II","III","IV"][Math.floor((new Date().getMonth())/3)+1];
-    render_chart(quarterRoman);
+    var querter = new Date().getFullYear();
+    render_chart(querter);
   });
 
 
