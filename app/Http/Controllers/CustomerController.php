@@ -35,8 +35,9 @@ class CustomerController extends Controller
         ->where('status_app_data_customer', '1')
         ->count();
 
-
-        if($totalcustacc <30){
+        if ($totalcustacc == 0){
+            $poin = 0;
+        } else if($totalcustacc <30){
             $poin = 5;
         } else if ($totalcustacc >= 30 && $totalcustacc <=60){
             $poin = 7;
