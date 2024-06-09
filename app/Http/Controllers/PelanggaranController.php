@@ -179,19 +179,23 @@ class PelanggaranController extends Controller
                         ->get();
                     }
 
-                    $sumbobot= $jumlahbobot[0]->jmlbobot;
+                    // return $jumlahbobot;
+
+                    // $sumbobot= $jumlahbobot[0]->jmlbobot;
                     
                     foreach ($jumlahbobot as $sumbobot) {
-                        if ($sumbobot >= 15) {
+                        if ($sumbobot->jmlbobot >= 15 && $sumbobot->jmlbobot <= 29) {
                             $nilai = 7;
-                        } elseif ($sumbobot >= 30 && $sumbobot <= 44) {
+                        } else if ($sumbobot->jmlbobot >= 30 && $sumbobot->jmlbobot <= 44) {
                             $nilai = 5;
-                        } elseif ($sumbobot >= 45 && $sumbobot <= 59) {
+                        } else if ($sumbobot->jmlbobot >= 45 && $sumbobot->jmlbobot <= 59) {
                             $nilai = 3; 
                         } else {
                             $nilai = 0;
                         }
                     }
+
+                    // return [$sumbobot->jmlbobot,$nilai];
                     
                      //cek apakh sudah ada quater dan year yg sama
                     $pelanggarannilai = Penilaian::where('pegawai_idpegawai',$pelanggaran->pegawai_idbpegawai)
