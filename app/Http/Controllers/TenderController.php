@@ -604,7 +604,6 @@ class TenderController extends Controller
 
                     // return $jumlahorder[0]->jumlah_order;
                     
-                    
                     if ($jumlahorder[0]->jumlah_order < 300) {
                         $nilai = 5;
                     } elseif ($jumlahorder[0]->jumlah_order >= 300 && $jumlahorder[0]->jumlah_order <= 1500) {
