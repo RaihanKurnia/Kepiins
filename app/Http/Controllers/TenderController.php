@@ -450,6 +450,7 @@ class TenderController extends Controller
 
         $result->nama_pegawai= session('nama') ;
         $result->pesan = 'telah menambahkan Tander Baru';
+        $result->type = 'tender';
         $getnotif = $result->getAttributes();
         event (new CustomerNotification($getnotif));
         

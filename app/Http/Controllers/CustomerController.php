@@ -182,6 +182,7 @@ class CustomerController extends Controller
                 DB::commit();
                 $customer->nama_pegawai= session('nama') ;
                 $customer->pesan = 'telah menambahkan Customer Baru';
+                $customer->type = 'customer';
                 $getcustomer = $customer->getAttributes();
 
                 event (new CustomerNotification($getcustomer));

@@ -111,7 +111,7 @@
                                 <div class="navi navi-hover scroll my-4" data-scroll="true" data-height="300" data-mobile-height="200" id="notification-container">
                               
                                     <!--begin::Item used notif-->
-                                    <a href="#" class="navi-item">
+                                    <!-- <a href="#" class="navi-item">
                                         <div class="navi-link">
                                             <div class="navi-icon mr-2">
                                                 <i class="flaticon2-user flaticon2-line- text-success"></i>
@@ -121,8 +121,15 @@
                                                 <div class="text-muted"><b>FRANSISKA DENANDA</b> telah menambahkan customer Baru</div>
                                             </div>
                                         </div>
-                                    </a>
+                                    </a> -->
                                     <!--end::Item-->
+
+
+                                    <div class="navi-item text-center" id="first">
+                                        <div class="navi-text">
+                                            <div class="font-weight-bold text-center">Tidak ada pesan</div>
+                                        </div>
+                                    </div>
                                     
                                 </div>
                                 <!--end::Scroll-->
@@ -200,28 +207,21 @@
         var notification = {
             name: data.cust.nama_pegawai,
             timestamp: timestamp,
-            pesan:data.cust.pesan
+            pesan:data.cust.pesan,
+            type:data.cust.type
         };
 
+        $('#first').remove();
         // playNotificationSound();
         appendNotification(notification);
         // storeNotification(notification);
     });
 
-    function playNotificationSound() {
-        // Create a new audio element
-        var audio = new Audio('{{asset('assets/media/notification.mp3')}}');
-        // Play the audio
-        audio.play();
-    }
-
-    $('#clear-notifications').on('click', function() {
-            clearNotifications();
-        });
 
         function appendNotification(notification) {
+            const link = notification.type === 'customer' ? '/customer/approval' : '/tender/approval';
             $('#notification-container').append(`
-                <a href="#" class="navi-item">
+                <a href="${link}" class="navi-item">
                     <div class="navi-link">
                         <div class="navi-icon mr-2">
                             <i class="flaticon2-user flaticon2-line- text-success"></i>
