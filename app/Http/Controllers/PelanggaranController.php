@@ -121,18 +121,46 @@ class PelanggaranController extends Controller
 
 
         // return $pelanggaran;
-        foreach ($pelanggaran as $sumbobot) {
-            if ($sumbobot->bobot_pelanggaran >= 15 && $sumbobot->bobot_pelanggaran <= 29) {
-                $poin = 7;
-            } else if ($sumbobot->bobot_pelanggaran >= 30 && $sumbobot->bobot_pelanggaran <= 44) {
-                $poin = 5;
-            } else if ($sumbobot->bobot_pelanggaran >= 45 && $sumbobot->bobot_pelanggaran <= 59) {
-                $poin = 3; 
-            } else {
-                $poin = 0;
-            }
+        $bobot = 0;
+        foreach ($pelanggaran as $pelanggaran_data) {
+            $bobot += $pelanggaran_data->bobot_pelanggaran;
         }
+
+        if ($bobot < 15){
+            $poin = 9;
+        }else if ($bobot >= 15 && $bobot <= 29) {
+            $poin = 7;
+        } else if ($bobot >= 30 && $bobot <= 44) {
+            $poin = 5;
+        } else if ($bobot >= 45 && $bobot <= 59) {
+            $poin = 3; 
+        } else if ($bobot > 59){
+            $poin = 0;
+        }
+
         // return $poin;
+
+        // foreach ($pelanggaran as $sumbobot) {
+        //    return $sumbobot->bobot_pelanggaran;
+        // }
+
+
+        // foreach ($pelanggaran as $sumbobot) {
+        //     if ($sumbobot->bobot_pelanggaran < 15){
+        //         +$poin = 9;
+        //     }else if ($sumbobot->bobot_pelanggaran >= 15 && $sumbobot->bobot_pelanggaran <= 29) {
+        //         +$poin = 7;
+        //     } else if ($sumbobot->bobot_pelanggaran >= 30 && $sumbobot->bobot_pelanggaran <= 44) {
+        //         +$poin = 5;
+        //     } else if ($sumbobot->bobot_pelanggaran >= 45 && $sumbobot->bobot_pelanggaran <= 59) {
+        //         +$poin = 3; 
+        //     } else if ($sumbobot->bobot_pelanggaran > 59){
+        //         +$poin = 0;
+        //     }
+        // }
+
+        
+        // return [$sumbobot->bobot_pelanggaran,$poin];
 
 
         // if($totalpelanggaran == 0){
@@ -180,36 +208,53 @@ class PelanggaranController extends Controller
 
 
                 if ($result) {
+                    // return $result;
+
                     $year = Carbon::now()->year;
                     $pelanggaran = Pelanggaran::where('pegawai_idbpegawai', $request->param_idpeg)
                     ->first();
 
-                    $pelanggaranacc_year = $pelanggaran->created_at->year;
-                    $pelanggaranacc_quarter = $pelanggaran->created_at->quarter;
+                    $waktuPelanggaran = Carbon::parse($pelanggaran->waktu_pelanggaran);
 
+                    // return $pelanggaran;
+
+
+
+                    $pelanggaranacc_year = $waktuPelanggaran->year;
+                    $pelanggaranacc_quarter = $waktuPelanggaran->quarter;
+                    // $pelanggaranacc_year = DB::raw('YEAR(STR_TO_DATE(waktu_pelanggaran, "%Y-%m-%d"))');
+                    // $pelanggaranacc_quarter = DB::raw('QUARTER(STR_TO_DATE(waktu_pelanggaran, "%Y-%m-%d"))');
+                   
+
+                    // return [$pelanggaranacc_year,$pelanggaranacc_quarter];
 
                     if($pelanggaran){
                         $jumlahbobot = Pelanggaran::select(DB::raw('SUM(bobot_pelanggaran) AS jmlbobot'))
                         ->join('jenis_pelanggarans','jenis_pelanggarans.idjenis_pelanggaran','pelanggarans.jenis_pelanggaran_idjenis_pelanggaran')
                         ->where('pegawai_idbpegawai',$pelanggaran->pegawai_idbpegawai)
-                        ->where(DB::raw('YEAR(pelanggarans.created_at)'),$pelanggaranacc_year)
-                        ->where(DB::raw('QUARTER(pelanggarans.created_at)'),$pelanggaranacc_quarter)
-                        ->groupBy(DB::raw('YEAR(pelanggarans.created_at)'), DB::raw('QUARTER(pelanggarans.created_at)'))
+                        ->where(DB::raw('YEAR(pelanggarans.waktu_pelanggaran)'),$pelanggaranacc_year)
+                        ->where(DB::raw('QUARTER(pelanggarans.waktu_pelanggaran)'),$pelanggaranacc_quarter)
+                        ->groupBy(DB::raw('YEAR(pelanggarans.waktu_pelanggaran)'), DB::raw('QUARTER(pelanggarans.waktu_pelanggaran)'))
                         ->get();
                     }
+
+                    // $jumlahbobot=  $jumlahbobot->jmlbobot;
 
                     // return $jumlahbobot;
 
                     // $sumbobot= $jumlahbobot[0]->jmlbobot;
                     
                     foreach ($jumlahbobot as $sumbobot) {
-                        if ($sumbobot->jmlbobot >= 15 && $sumbobot->jmlbobot <= 29) {
+                    // return $sumbobot->jmlbobot;
+                        if($sumbobot->jmlbobot < 15){
+                            $nilai = 9;
+                        } else if ($sumbobot->jmlbobot >= 15 && $sumbobot->jmlbobot <= 29) {
                             $nilai = 7;
                         } else if ($sumbobot->jmlbobot >= 30 && $sumbobot->jmlbobot <= 44) {
                             $nilai = 5;
                         } else if ($sumbobot->jmlbobot >= 45 && $sumbobot->jmlbobot <= 59) {
                             $nilai = 3; 
-                        } else {
+                        } else{
                             $nilai = 0;
                         }
                     }
@@ -222,6 +267,8 @@ class PelanggaranController extends Controller
                     ->where(DB::raw('YEAR(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d"))'),$pelanggaranacc_year)
                     ->where(DB::raw('QUARTER(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d"))'),$pelanggaranacc_quarter)
                     ->first();
+
+                    // return [$pelanggaranacc_year,$pelanggaranacc_quarter,$pelanggarannilai,$nilai];
 
                     //jika tidak ada yg sama, insert kuy
                     if(!$pelanggarannilai){ 
