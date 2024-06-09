@@ -58,6 +58,19 @@
 			
 					<div class="card-body">
 				
+					<div class="mb-10">
+							<div class="row mb-8">
+								<div class="col-lg-3 mb-lg-0 mb-6">
+									<label><b>Periode:</b></label>
+									<select class="form-control datatable-input" data-col-index="7" id='periode'>
+										<option value="1">Periode 1</option>
+										<option value="2">Periode 2</option>
+										<option value="3">Periode 3</option>
+										<option value="4">Periode 4</option>
+									</select>
+								</div>
+							</div>
+						</div>
 
 						<!--begin: Datatable-->
 						<table class="table table-separate table-head-custom table-checkable" id="kt_datatable1">
@@ -131,11 +144,14 @@
 	<script type="text/javascript">
 
 		$(document).ready(function(){
-			refreshTable();
+			var quarterRoman = ["1","2","3","4"][Math.floor((new Date().getMonth()) / 3)];
+			// var querter = new Date().getFullYear();
+			$('#periode').val(quarterRoman);
+			refreshTable(quarterRoman);
 		});
 
 
-		function refreshTable(){
+		function refreshTable(quarterRoman){
 			$('#kt_datatable1').DataTable({
 				"bDestroy": true,
 				"responsive":true,
@@ -149,7 +165,8 @@
                 type : "post",
                 data: {
 						"_token": "{{ csrf_token() }}",
-                        param_view: 'view'
+                        param_view: 'view',
+						param_quarter:quarterRoman
                 },
 					error: function(xhr, errorType, thrownError) {
 						$('.dataTables_empty').text("No data available in table");
@@ -183,7 +200,7 @@
 			});
 		};
 
-		function searchtable(custname,status){
+		function searchtable(custname,status,quarterRoman){
 			$('#kt_datatable1').DataTable({
 				"bDestroy": true,
 				"responsive":true,
@@ -199,6 +216,7 @@
 						"_token": "{{ csrf_token() }}",
                         param_view: 'search',
 						param_pegawai_idbpegawai:pegawai_idbpegawai,
+						param_quarter:quarterRoman
 					},
 					error: function(xhr, errorType, thrownError) {
 						$('.dataTables_empty').text("No data available in table");
@@ -263,23 +281,30 @@
 			});
 		};
 
-		function cari() {
-			var custname = $('#kt_datatable_search_query').val();
-			var status = $('#kt_datatable_search_status').val();
 
-			if (custname == '' && status == 'all'){
-				refreshTable();
-			} else{
-				searchtable(custname,status);
-			}
+		$('#periode').on('change', function(){
+			var selectedOption = $(this).val();
+			refreshTable(selectedOption);
+		});
+		// function cari() {
+		// 	var custname = $('#kt_datatable_search_query').val();
+		// 	var status = $('#kt_datatable_search_status').val();
+
+		// 	if (custname == '' && status == 'all'){
+		// 		refreshTable();
+		// 	} else{
+		// 		searchtable(custname,status);
+		// 	}
 
 
-			// console.log({custname});
-			// console.log({status});
+		// 	// console.log({custname});
+		// 	// console.log({status});
 
-			// var table = $('#kt_datatable1').DataTable();
-			// $('#kt_datatable1').DataTable().clear().draw();
-		}
+		// 	// var table = $('#kt_datatable1').DataTable();
+		// 	// $('#kt_datatable1').DataTable().clear().draw();
+		// }
+
+
 
 		function remove(id) {
 			swal.fire({

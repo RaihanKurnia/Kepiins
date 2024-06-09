@@ -84,6 +84,7 @@ class PelanggaranController extends Controller
         $pelanggaran = DB::table('pelanggarans as pel')
             ->join('pegawais as peg','peg.idpegawai','=','pel.pegawai_idbpegawai')
             ->join('jenis_pelanggarans as jns','jns.idjenis_pelanggaran','=','pel.jenis_pelanggaran_idjenis_pelanggaran')
+            ->where(DB::raw('QUARTER(STR_TO_DATE(waktu_pelanggaran, "%Y-%m-%d"))') ,$request->param_quarter)
             ->where('pel.pegawai_idbpegawai',session('id'))
             ->select('pel.*','peg.nama_pegawai','jns.nama_pelanggaran','jns.kategori')
             ->get();
@@ -92,12 +93,14 @@ class PelanggaranController extends Controller
                 $pelanggaran = DB::table('pelanggarans as pel')
                 ->join('pegawais as peg','peg.idpegawai','=','pel.pegawai_idbpegawai')
                 ->join('jenis_pelanggarans as jns','jns.idjenis_pelanggaran','=','pel.jenis_pelanggaran_idjenis_pelanggaran')
+                ->where(DB::raw('QUARTER(STR_TO_DATE(waktu_pelanggaran, "%Y-%m-%d"))') ,$request->param_quarter)
                 ->select('pel.*','peg.nama_pegawai','jns.nama_pelanggaran','jns.kategori')
                 ->get();
             } else {
                 $pelanggaran = DB::table('pelanggarans as pel')
                 ->join('pegawais as peg','peg.idpegawai','=','pel.pegawai_idbpegawai')
                 ->join('jenis_pelanggarans as jns','jns.idjenis_pelanggaran','=','pel.jenis_pelanggaran_idjenis_pelanggaran')
+                ->where(DB::raw('QUARTER(STR_TO_DATE(waktu_pelanggaran, "%Y-%m-%d"))') ,$request->param_quarter)
                 ->where('pel.pegawai_idbpegawai',$request->param_pegawai_idbpegawai)
                 ->select('pel.*','peg.nama_pegawai','jns.nama_pelanggaran','jns.kategori')
                 ->get();
