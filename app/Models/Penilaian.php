@@ -9,6 +9,7 @@ class Penilaian extends Model
 {
     use HasFactory;
     protected $table = "detail_penilaians";
+    protected $primaryKey = 'iddetail_penialaian'; 
     protected $fillable = 
     ['iddetail_penialaian',
     'nilai',

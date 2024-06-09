@@ -12,5 +12,6 @@ class JenisPelanggaran extends Model
     protected $fillable = 
     ['idjenis_pelanggaran',
     'nama_pelanggaran',
-    'bobot_pelanggaran'];
+    'bobot_pelanggaran',
+    'kategori'];
 }

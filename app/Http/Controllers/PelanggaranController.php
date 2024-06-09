@@ -29,6 +29,8 @@ class PelanggaranController extends Controller
 
     public function jns_pelanggaran_add(Request $request)
     {
+        // return $request;
+        
         $result = JenisPelanggaran::create([
             'nama_pelanggaran'=> $request->param_nama,
             'bobot_pelanggaran'=> $request->param_bobot,
@@ -140,8 +142,8 @@ class PelanggaranController extends Controller
 
     public function pelanggaran_add_action(Request $request)
     {
+        DB::beginTransaction();
         try {
-            
             if($request->hasfile('param_file')){
                 $file_ext = $request->file('param_file')->getClientOriginalExtension();
                 $unq_filename=Str::uuid()->toString().'.'.$file_ext;
@@ -157,24 +159,72 @@ class PelanggaranController extends Controller
 
                 if ($result) {
                     $year = Carbon::now()->year;
-    
-                     Penilaian::create([
-                        'nilai' => '1',
-                        'jenis_penilaian' => 'pelanggaran',
-                        'pegawai_idpegawai' =>  $request->param_idpeg,
-                        'periode' => $year
-                    ]);
-    
-                    // return ($gas);
+                    $pelanggaran = Pelanggaran::where('pegawai_idbpegawai', $request->param_idpeg)
+                    ->first();
+
+                    $pelanggaranacc_year = $pelanggaran->created_at->year;
+                    $pelanggaranacc_quarter = $pelanggaran->created_at->quarter;
+
+
+                    if($pelanggaran){
+                        $jumlahbobot = Pelanggaran::select(DB::raw('SUM(bobot_pelanggaran) AS jmlbobot'))
+                        ->join('jenis_pelanggarans','jenis_pelanggarans.idjenis_pelanggaran','pelanggarans.jenis_pelanggaran_idjenis_pelanggaran')
+                        ->where('pegawai_idbpegawai',$pelanggaran->pegawai_idbpegawai)
+                        ->where(DB::raw('YEAR(pelanggarans.created_at)'),$pelanggaranacc_year)
+                        ->where(DB::raw('QUARTER(pelanggarans.created_at)'),$pelanggaranacc_quarter)
+                        ->groupBy(DB::raw('YEAR(pelanggarans.created_at)'), DB::raw('QUARTER(pelanggarans.created_at)'))
+                        ->get();
+                    }
+
+                    $sumbobot= $jumlahbobot[0]->jmlbobot;
+
+                    if ($sumbobot >= 15) {
+                        $nilai = 7;
+                    } elseif ($sumbobot >= 30 && $sumbobot <= 44) {
+                        $nilai = 5;
+                    } elseif ($sumbobot >= 45 && $sumbobot <= 59) {
+                        $nilai = 4; 
+                    } else {
+                        $nilai = 0;
+                    }
+                    
+                     //cek apakh sudah ada quater dan year yg sama
+                    $pelanggarannilai = Penilaian::where('pegawai_idpegawai',$pelanggaran->pegawai_idbpegawai)
+                    ->where('jenis_penilaian','pelanggaran')
+                    ->where(DB::raw('YEAR(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d"))'),$pelanggaranacc_year)
+                    ->where(DB::raw('QUARTER(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d"))'),$pelanggaranacc_quarter)
+                    ->first();
+
+                    //jika tidak ada yg sama, insert kuy
+                    if(!$pelanggarannilai){ 
+                        Penilaian::create([
+                            'nilai' => $nilai ,
+                            'jenis_penilaian' => 'pelanggaran',
+                            'pegawai_idpegawai' =>  $pelanggaran->pegawai_idbpegawai,
+                            'periode' => $pelanggaranacc_year,
+                            'tanggal_penilaian'=>Carbon::createFromFormat('Y-m-d H:i:s', $pelanggaran->waktu_pelanggaran)
+                        ]);
+                        $nilaimessage = 'insert nilai baru';
+                    } else {
+                        if($pelanggarannilai->nilai != $nilai){
+                            $pelanggarannilai->update([
+                                'nilai' => $nilai
+                            ]);
+                            $nilaimessage = 'update nilai to '.$nilai;
+                        } else {
+                            $nilaimessage = 'no update nilai';
+                        }
+                    }
     
                 }
-
+                DB::commit();   
                 return [
                     'success' => true,
                     'message' => 'Data berhasil disimpan'
                 ];
             }
         } catch (\Throwable $th) {
+            DB::rollback();
             return [
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat penyimpanan data',

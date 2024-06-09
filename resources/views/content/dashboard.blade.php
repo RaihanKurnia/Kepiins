@@ -74,8 +74,8 @@
                           <!--begin::Header-->
                           <div class="card-header border-0 py-5">
                               <h3 class="card-title align-items-start flex-column">
-                                  <span class="card-label font-weight-bolder text-dark">Agents Stats</span>
-                                  <span class="text-muted mt-3 font-weight-bold font-size-sm">More than 400+ new members</span>
+                                  <span class="card-label font-weight-bolder text-dark">Laporan Kinerja Karyawan</span>
+                                  <!-- <span class="text-muted mt-3 font-weight-bold font-size-sm">More than 400+ new members</span> -->
                               </h3>
                               <div class="card-toolbar">
                                   <!-- <a  onclick="select_range()" class="btn btn-info font-weight-bolder font-size-sm mr-3">New Report</a> -->
@@ -148,8 +148,8 @@
                           <!--begin::Header-->
                           <div class="card-header border-0 py-5">
                               <h3 class="card-title align-items-start flex-column">
-                                  <span class="card-label font-weight-bolder text-dark">Agents Stats</span>
-                                  <span class="text-muted mt-3 font-weight-bold font-size-sm">More than 400+ new members</span>
+                                  <span class="card-label font-weight-bolder text-dark">Laporan Kinerja Karyawan</span>
+                                  <!-- <span class="text-muted mt-3 font-weight-bold font-size-sm">More than 400+ new members</span> -->
                               </h3>
                               <div class="card-toolbar">
                                   <!-- <a  onclick="select_range()" class="btn btn-info font-weight-bolder font-size-sm mr-3">New Report</a> -->
@@ -423,7 +423,8 @@
 
   $(document).ready(function(){
     var quarterRoman = ["","I","II","III","IV"][Math.floor((new Date().getMonth())/3)+1];
-    render_chart(quarterRoman);
+    var querter = new Date().getFullYear();
+    render_chart(querter);
   });
 
 

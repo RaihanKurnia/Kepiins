@@ -175,7 +175,6 @@
     </div>
     <!--end::Container-->
 </div>
-
 @php
     $role = Session::get('role');
 @endphp
@@ -184,28 +183,37 @@
 <!-- Notification sound -->
 <audio id="notification-sound" src="{{asset('assets/media/notification.mp3')}}" preload="auto"></audio>
 <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
-<script>
-
-$(document).ready(function() {
+<script type="text/javascript">
     // Enable pusher logging - don't include this in production
-    Pusher.logToConsole = true;
+    // Pusher.logToConsole = true;
 
     var pusher = new Pusher('0f1f308829a2c12012bc', {
     cluster: 'ap1'
     });
 
+    // console.log(pusher);
+
     var channel = pusher.subscribe('notif-channel');
     channel.bind('cust-inserted', function(data) {
-        $('#notification-sound')[0].play();
+        $('#notification-sound')[0].play()
         var timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
         var notification = {
             name: data.cust.nama_pegawai,
-            timestamp: timestamp
-            pesan:data.cust.pesan,
+            timestamp: timestamp,
+            pesan:data.cust.pesan
         };
+
+        // playNotificationSound();
         appendNotification(notification);
-        storeNotification(notification);
+        // storeNotification(notification);
     });
+
+    function playNotificationSound() {
+        // Create a new audio element
+        var audio = new Audio('{{asset('assets/media/notification.mp3')}}');
+        // Play the audio
+        audio.play();
+    }
 
     $('#clear-notifications').on('click', function() {
             clearNotifications();
@@ -227,21 +235,26 @@ $(document).ready(function() {
             `);
         }
 
-        function storeNotification(notification) {
-            let notifications = JSON.parse(localStorage.getItem('notifications')) || [];
-            notifications.push(notification);
-            localStorage.setItem('notifications', JSON.stringify(notifications));
-        }
+        // function storeNotification(notification) {
+        //     let notifications = JSON.parse(localStorage.getItem('notifications')) || [];
+        //     notifications.push(notification);
+        //     localStorage.setItem('notifications', JSON.stringify(notifications));
+        // }
 
-        function loadNotifications() {
-            let notifications = JSON.parse(localStorage.getItem('notifications')) || [];
-            notifications.forEach(appendNotification);
-        }
+        // function loadNotifications() {
+        //     let notifications = JSON.parse(localStorage.getItem('notifications')) || [];
+        //     notifications.forEach(appendNotification);
+        // }
 
-        function clearNotifications() {
-            $('#notification-container').empty();
-            localStorage.removeItem('notifications');
-        }
-});
+        // function clearNotifications() {
+        //     $('#notification-container').empty();
+        //     localStorage.removeItem('notifications');
+        // }
+
+function audio() {
+    var audio = new Audio('{{asset("assets/media/notification.mp3")}}');
+    audio.play();
+
+}
 </script>
 @endif

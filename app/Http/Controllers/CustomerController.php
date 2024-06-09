@@ -409,25 +409,69 @@ class CustomerController extends Controller
             ]);
 
             if ($result) {
-                $nilai = Customer::where('idcustomer', $request->param_cust)
+                $customeracc = Customer::where('idcustomer', $request->param_cust)
                 ->first();
 
-                 Penilaian::create([
-                    'nilai' => '1',
-                    'jenis_penilaian' => 'customer',
-                    'pegawai_idpegawai' =>  $nilai->idpegawai_input,
-                    'periode' => $year
-                ]);
+               
+                $customeracc_year = $customeracc->created_at->year;
+                $customeracc_quarter = $customeracc->created_at->quarter;
 
-                // return ($gas);
+                if ($customeracc){
+                    $jumlahcust = Customer::select(DB::raw('COUNT(*) AS total_customers'))
+                    ->where('idpegawai_input', $customeracc->idpegawai_input)
+                    ->where('status_app_data_customer', '1')
+                    ->where(DB::raw('YEAR(created_at)'),$customeracc_year)
+                    ->where(DB::raw('QUARTER(created_at)'),$customeracc_quarter)
+                    ->groupBy(DB::raw('YEAR(created_at)'), DB::raw('QUARTER(created_at)'))
+                    ->get();
+
+                    if ($jumlahcust[0]->total_customers < 30) {
+                        $nilai = 5;
+                    } elseif ($jumlahcust[0]->total_customers >= 30 && $jumlahcust[0]->total_customers <= 60) {
+                        $nilai = 7;
+                    } else {
+                        $nilai = 9;
+                    }
+
+                    //cek apakh sudah ada que dan year yg sama
+                    $pegawainilai = Penilaian::where('pegawai_idpegawai', $customeracc->idpegawai_input)
+                    ->where('jenis_penilaian','customer')
+                    ->where(DB::raw('YEAR(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d"))'),$customeracc_year)
+                    ->where(DB::raw('QUARTER(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d"))'),$customeracc_quarter)
+                    ->first();
+
+                    //jika tidak ada yg sama, insert kuy
+                    if(!$pegawainilai){ 
+                        Penilaian::create([
+                            'nilai' => $nilai ,
+                            'jenis_penilaian' => 'customer',
+                            'pegawai_idpegawai' =>  $customeracc->idpegawai_input,
+                            'periode' => $customeracc_year,
+                            'tanggal_penilaian'=>$customeracc->created_at
+                        ]);
+                        $nilaimessage = 'insert nilai baru';
+                    } else { // jika ada yg sama, cek apakah nilainya sama//
+                        if($pegawainilai->nilai != $nilai){
+                            $pegawainilai->update([
+                                'nilai' => $nilai
+                            ]);
+                            $nilaimessage = 'update nilai to '.$nilai;
+                        } else {
+                            $nilaimessage = 'no update nilai';
+                        }
+                       
+                    }
+                }
 
             }
-
-
             DB::commit();
             return [
                 'success' => true,
-                'message' => 'Data berhasil disimpan.'
+                'message' => 'Data berhasil disimpan.',
+                'jumlahcust' => $jumlahcust[0]->total_customers,
+                'customeracc_year' => $customeracc_year,
+                'customeracc_quarter' => $customeracc_quarter,
+                'nilai'=> $nilaimessage
             ];
 
         }catch (\Throwable $th) {

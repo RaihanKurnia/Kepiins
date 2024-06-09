@@ -152,19 +152,20 @@
 									<label>Bobot Pelanggaran</label>
 									<input type="number"  min="0" max="1000" step="0.01" id ="bobot" class="form-control" placeholder="Input Bobot Pelanggaran" />
 								</div>
-								<div class="form-group">
+								<!-- <div class="form-group">
 									<label>Kategori</label>
 									<input type="text"  id ="kategori" class="form-control" placeholder="Input Kategori"> </input>
-								</div>
-								<!-- <div class="form-group">
-									<label>Status Jabatan</label>
-									<div></div>
-									<select id ="status" class="custom-select form-control">
-										<option value="" disabled selected>Open this select menu</option>
-										<option value="Kontrak">Kontrak</option>
-										<option value="Tetap">Tetap</option>
-									</select>
 								</div> -->
+								<div class="form-group">
+									<label>Kategori</label>
+									<div></div>
+									<select id ="kategori" class="custom-select form-control">
+										<option value="" disabled selected>Open this select menu</option>
+										<option value="Ringan">Ringan</option>
+										<option value="Sedang">Sedang</option>
+										<option value="Berat">Berat</option>
+									</select>
+								</div>
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Close</button>
@@ -218,6 +219,7 @@ $("#button_add").click(function(){
     $('#bobot').val('');
 	$('#kategori').val('');
 });
+
 
 function refreshTable(){
 	$('#kt_datatable1').DataTable({
@@ -281,6 +283,10 @@ function add_edit() {
 	var nama_pelanggaran = $('#nama').val();
     var bobot = $('#bobot').val();
 	var kategori = $('#kategori').val();
+
+	console.log({nama_pelanggaran});
+	console.log({bobot});
+	console.log({kategori});
 
 	$.ajax({  
         url : (!trigerUpdate?"{{route('jns_pelanggaran_add')}}":"{{route('jns_pelanggaran_edit')}}"),
