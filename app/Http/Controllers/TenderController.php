@@ -602,6 +602,8 @@ class TenderController extends Controller
                 $tenderacc_year = $tanggalpemesanan->year;
                 $tenderacc_quarter = $tanggalpemesanan->quarter;
 
+           
+
                 
                 
                 if ($tenderacc){
@@ -609,23 +611,23 @@ class TenderController extends Controller
                     ->join('customers','pesanans.customer_idcustomer','=','customers.idcustomer')
                     ->where('idpegawai_input',$tenderacc->idpegawai_input)
                     ->where('status_app_pesanan','1')
-                    ->where(DB::raw((Carbon::parse($tenderacc->tanggal_pemesanan))->year),$tenderacc_year)
-                    ->where(DB::raw((Carbon::parse($tenderacc->tanggal_pemesanan))->quarter),$tenderacc_quarter)
+                    ->where(DB::raw('YEAR(STR_TO_DATE(tanggal_pemesanan, "%Y-%m-%d"))'),$tenderacc_year)
+                    ->where(DB::raw('QUARTER(STR_TO_DATE(tanggal_pemesanan, "%Y-%m-%d"))'),$tenderacc_quarter)
                     ->groupBy(DB::raw('YEAR(STR_TO_DATE(tanggal_pemesanan, "%Y-%m-%d"))'), DB::raw('QUARTER(STR_TO_DATE(tanggal_pemesanan, "%Y-%m-%d"))'))
                     ->get();
 
                     
 
                     // return $jumlahorder;
-                    foreach ($jumlahorder as $jumlahorder_nilai) {
-                        if ($jumlahorder_nilai->jumlah_order < 300) {
+                    // foreach ($jumlahorder as $jumlahorder_nilai) {
+                        if ($jumlahorder[0]->jumlah_order < 300) {
                             $nilai = 5;
-                        } elseif ($jumlahorder_nilai->jumlah_order >= 300 && $jumlahorder_nilai->jumlah_order <= 1500) {
+                        } elseif ($jumlahorder[0]->jumlah_order >= 300 && $jumlahorder[0]->jumlah_order <= 1500) {
                             $nilai = 7;
                         } else {
                             $nilai = 9;
                         }
-                    }
+                    // }
 
                     // return $nilai;
                     

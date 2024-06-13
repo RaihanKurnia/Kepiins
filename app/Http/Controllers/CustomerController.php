@@ -425,6 +425,8 @@ class CustomerController extends Controller
                 $customeracc = Customer::where('idcustomer', $request->param_cust)
                 ->first();
 
+                // return $result;
+
                
                 $customeracc_year = $customeracc->created_at->year;
                 $customeracc_quarter = $customeracc->created_at->quarter;
@@ -438,6 +440,9 @@ class CustomerController extends Controller
                     ->groupBy(DB::raw('YEAR(created_at)'), DB::raw('QUARTER(created_at)'))
                     ->get();
 
+                    // return $jumlahcust;
+
+
                     foreach ($jumlahcust as $jumlahcust_nilai) {
                         if ($jumlahcust_nilai->total_customers < 30) {
                             $nilai = 5;
@@ -448,12 +453,17 @@ class CustomerController extends Controller
                         }
                     }
 
+                    // return $nilai;
+                    
+
                     //cek apakh sudah ada que dan year yg sama
                     $pegawainilai = Penilaian::where('pegawai_idpegawai', $customeracc->idpegawai_input)
                     ->where('jenis_penilaian','customer')
                     ->where(DB::raw('YEAR(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d"))'),$customeracc_year)
                     ->where(DB::raw('QUARTER(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d"))'),$customeracc_quarter)
                     ->first();
+
+                    // return $pegawainilai;
 
                     //jika tidak ada yg sama, insert kuy
                     if(!$pegawainilai){ 
@@ -483,10 +493,11 @@ class CustomerController extends Controller
             return [
                 'success' => true,
                 'message' => 'Data berhasil disimpan.',
+                'nilai' =>$nilai,
                 'jumlahcust' => $jumlahcust[0]->total_customers,
                 'customeracc_year' => $customeracc_year,
                 'customeracc_quarter' => $customeracc_quarter,
-                'nilai'=> $nilaimessage
+                'nilaimessage'=> $nilaimessage
             ];
 
         }catch (\Throwable $th) {

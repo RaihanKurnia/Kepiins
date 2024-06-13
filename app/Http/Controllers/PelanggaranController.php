@@ -67,7 +67,6 @@ class PelanggaranController extends Controller
     }
 
     //PELANGGARAN
-
     public function pelanggaran_add()
     {
         return view('content.pelanggaran.pelanggaran_add');
@@ -216,12 +215,9 @@ class PelanggaranController extends Controller
 
                     $waktuPelanggaran = Carbon::parse($pelanggaran->waktu_pelanggaran);
 
-                    // return $pelanggaran;
-
-
-
                     $pelanggaranacc_year = $waktuPelanggaran->year;
                     $pelanggaranacc_quarter = $waktuPelanggaran->quarter;
+                    // return $pelanggaranacc_quarter;
                     // $pelanggaranacc_year = DB::raw('YEAR(STR_TO_DATE(waktu_pelanggaran, "%Y-%m-%d"))');
                     // $pelanggaranacc_quarter = DB::raw('QUARTER(STR_TO_DATE(waktu_pelanggaran, "%Y-%m-%d"))');
                    
@@ -254,7 +250,7 @@ class PelanggaranController extends Controller
                             $nilai = 5;
                         } else if ($sumbobot->jmlbobot >= 45 && $sumbobot->jmlbobot <= 59) {
                             $nilai = 3; 
-                        } else{
+                        } else if ($sumbobot->jmlbobot > 59){
                             $nilai = 0;
                         }
                     }
@@ -309,6 +305,7 @@ class PelanggaranController extends Controller
     }
 
     public function pelanggaran_remove_action(Request $request) {
+        DB::beginTransaction();
         try {
             $pelanggaran = Pelanggaran::where('idpelanggaran',$request->param_id)->first();
             $pathfile = public_path("filesurat/".$pelanggaran->bukti_pelanggaran);
@@ -323,6 +320,7 @@ class PelanggaranController extends Controller
 
             Pelanggaran::where('idpelanggaran',$request->param_id)->delete();
 
+            DB::commit();
             return [
                 'success' => true,
                 'message' => 'Data berhasil dihapus',
@@ -330,6 +328,7 @@ class PelanggaranController extends Controller
             ];   
 
         } catch (\Throwable $th) {
+            DB::rollback();
             return [
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat hapus data',

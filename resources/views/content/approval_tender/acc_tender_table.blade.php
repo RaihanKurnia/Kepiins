@@ -392,6 +392,7 @@ function searchTable(custname,barang,status,periode) {
 }
 
 function action(data,triger) {
+	var quarterRoman = ["1","2","3","4"][Math.floor((new Date().getMonth()) / 3)];
 	// console.log(triger);
 	if (triger == '1') {
 		// console.log('approved');
@@ -438,7 +439,7 @@ function action(data,triger) {
 							'success'
 							).then((result) => {
 								if (result.value || result.isDismissed) {
-									refreshTable(); 
+									refreshTable(quarterRoman); 
 								}
 							});
 						}
@@ -492,7 +493,7 @@ function action(data,triger) {
 							'success'
 							).then((result) => {
 								if (result.value || result.isDismissed) {
-									refreshTable(); 
+									refreshTable(quarterRoman); 
 								}
 							});
 						}
