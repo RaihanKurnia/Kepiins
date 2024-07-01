@@ -11,19 +11,14 @@
                 <!--begin::Page Heading-->
                 <div class="d-flex align-items-baseline mr-5">
                     <!--begin::Page Title-->
-                    <h5 class="text-dark font-weight-bold my-2 mr-5">Pegawai</h5>
+                    <h5 class="text-dark font-weight-bold my-2 mr-5">Profil</h5>
                     <!--end::Page Title-->
                     <!--begin::Breadcrumb-->
                     <ul class="breadcrumb breadcrumb-transparent breadcrumb-dot font-weight-bold p-0 my-2 font-size-sm">
                         <li class="breadcrumb-item">
-                            <a href="" class="text-muted">Data Master</a>
+                            <a href="" class="text-muted">Data Profil</a>
                         </li>
-                        <li class="breadcrumb-item">
-                            <a href="" class="text-muted">Pegawai</a>
-                        </li>
-                        <li class="breadcrumb-item">
-                            <a href="" class="text-muted">Form Informasi Pegawai</a>
-                        </li>
+                    
                     </ul>
                     <!--end::Breadcrumb-->
                 </div>
@@ -63,47 +58,50 @@
                             <div class="col-xl-2"></div>
                             <div class="col-xl-8">
                                 <div class="my-5">
-                                    <h3 class="text-dark font-weight-bold mb-10">Informasi Pegawai:</h3>
+                                    <h3 class="text-dark font-weight-bold mb-10">Informasi User:</h3>
+
+                                    <div class="form-group row">
+                                        <label class="col-3">Foto</label>
+                                        <div class="col-9" >
+                                        <!-- <img src="{{ asset('assets/media/users/blank.png')}}" alt="" class= "d-flex align-self-start rounded mr-3" height="64"> -->
+                                        <!-- <input id="file" type="file" name="profile_avatar" accept=".png, .jpg, .jpeg" onchange="loadFile(event)" style="margin: auto;" /> -->
+                                       
+                                        
+                                            <div class="image-input image-input-empty image-input-outline" id="show_img" style="background-image: url({{ asset('assets/media/users/blank.png') }})">
+                                                <div class="image-input-wrapper"></div>
+                                                <label class="btn btn-xs btn-icon btn-circle btn-white btn-hover-text-primary btn-shadow" data-action="change" data-toggle="tooltip" title="" >
+                                                    <i class="fa fa-pen icon-sm text-muted"></i>
+                                                    <input id="file" type="file" name="profile_image" accept=".png, .jpg, .jpeg" />
+                                                    <input type="hidden" name="profile_avatar_remove" />
+                                                </label>
+                                                <span class="btn btn-xs btn-icon btn-circle btn-white btn-hover-text-primary btn-shadow" data-action="cancel" data-toggle="tooltip" title="Cancel avatar">
+                                                    <i class="ki ki-bold-close icon-xs text-muted"></i>
+                                                </span>
+                                                <span class="btn btn-xs btn-icon btn-circle btn-white btn-hover-text-primary btn-shadow" data-action="remove" data-toggle="tooltip" title="Remove avatar">
+                                                    <i class="ki ki-bold-close icon-xs text-muted"></i>
+                                                </span>
+                                            </div>
+
+                                        </div>
+                                        <!-- <div class="col-3">
+                                            <img src="{{ asset('assets/media/users/blank.png')}}" alt="" class= "d-flex align-self-start rounded mr-3" height="64">
+                                            <input id="file" type="file" name="profile_avatar" accept=".png, .jpg, .jpeg" onchange="loadFile(event)" />
+                                        </div> -->
+
+                                    </div>
                                     <div class="form-group row">
                                         <label class="col-3">Nama Pegawai</label>
                                         <div class="col-9">
                                             <input class="form-control" type="text" id="nama" placeholder='Input Nama Pegawai' />
                                         </div>
                                     </div>
-                                    <!-- <div class="form-group row validated">
-                                        <label class="col-3">Jenis Kelamin</label>
-                                        <div class="col-9">
-                                            <div class="option-control" id="jeniskelamin">
-                                                <label class="option-control col-3 ">
-                                                    <span class="radio">
-                                                        <input type="radio" name="billing_delivery" value="Male" />Male
-                                                        <span></span>
-                                                    </span>
-                                                </label>
-                                                <label class="option-control col-3">
-                                                        <span class="radio">
-                                                            <input type="radio" name="billing_delivery" value="Female" />Female
-                                                            <span></span>
-                                                        </span>
-                                                </label>
-                                                <div id="feedback" class="invalid-feedback"></div>
-                                            </div>
-                                        </div>
-                                    </div> -->
-                                    
-                                    <!-- <div class="form-group row">
-                                        <label class="col-3">Umur</label>
-                                        <div class="col-lg-4 col-md-9 col-sm-12">
-                                            <input type="number" class="form-control "  value="" id="umur" placeholder='Input Umur' />
-                                        </div>
-                                    </div> -->
+
                                     <div class="form-group row">
                                         <label class="col-3">Alamat</label>
                                         <div class="col-9">
                                             <textarea class="form-control" id="alamat" placeholder='Input Alamat' rows="3" ></textarea>
                                             <span class="form-text text-muted">Masukkan alamat tempat tinggal anda dengan lengkap</span>
                                         </div>
-                                        
                                     </div>
                                     <div class="form-group row">
                                         <label class="col-3">Email Address</label>
@@ -158,40 +156,7 @@
                                             </div>
                                         </div>
                                     </div>
-
-                                    <!-- <div class="form-group row">
-                                        <label class="col-3">Foto</label>
-                                        <div class="col-9" > -->
-                                        <!-- <img src="{{ asset('assets/media/users/blank.png')}}" alt="" class= "d-flex align-self-start rounded mr-3" height="64"> -->
-                                        <!-- <input id="file" type="file" name="profile_avatar" accept=".png, .jpg, .jpeg" onchange="loadFile(event)" style="margin: auto;" /> -->
-                                       
-                                        
-                                            <!-- <div class="image-input image-input-empty image-input-outline" id="show_img" style="background-image: url({{ asset('assets/media/users/blank.png') }})">
-                                                <div class="image-input-wrapper"></div>
-                                                <label class="btn btn-xs btn-icon btn-circle btn-white btn-hover-text-primary btn-shadow" data-action="change" data-toggle="tooltip" title="" >
-                                                    <i class="fa fa-pen icon-sm text-muted"></i>
-                                                    <input id="file" type="file" name="profile_image" accept=".png, .jpg, .jpeg" />
-                                                    <input type="hidden" name="profile_avatar_remove" />
-                                                </label>
-                                                <span class="btn btn-xs btn-icon btn-circle btn-white btn-hover-text-primary btn-shadow" data-action="cancel" data-toggle="tooltip" title="Cancel avatar">
-                                                    <i class="ki ki-bold-close icon-xs text-muted"></i>
-                                                </span>
-                                                <span class="btn btn-xs btn-icon btn-circle btn-white btn-hover-text-primary btn-shadow" data-action="remove" data-toggle="tooltip" title="Remove avatar">
-                                                    <i class="ki ki-bold-close icon-xs text-muted"></i>
-                                                </span>
-                                            </div>
-
-                                        </div> -->
-                                        <!-- <div class="col-3">
-                                            <img src="{{ asset('assets/media/users/blank.png')}}" alt="" class= "d-flex align-self-start rounded mr-3" height="64">
-                                            <input id="file" type="file" name="profile_avatar" accept=".png, .jpg, .jpeg" onchange="loadFile(event)" />
-                                        </div> -->
-
-                                    <!-- </div> -->
-
-                                    
-
-                                    <div class="form-group row">
+                                    <div class="form-group row" style= "display:none;">
                                         <label class="col-3">Jabatan</label>
                                         <div class="col-9">
                                             <select class="custom-select form-control" id="jabatan">
@@ -203,6 +168,27 @@
                                     </div>
                                 </div>
 
+                            </div>
+                            <div class="col-xl-2"></div>
+                        </div>
+                        <div class="separator separator-dashed my-10"></div>
+                        <!--begin::Row-->
+                        <div class ="row">
+                            <div class="col-xl-2"></div>
+                            <div class="col-xl-8">
+                                <div class="my-52">
+                                    <h3 class="text-dark font-weight-bold mb-10">Change Password:</h3>
+                                    <div class="form-group row mt-10">
+                                        <label class="col-3"></label>
+                                        <div class="col-9">
+                                            <button type="button" class="btn btn-light-danger font-weight-bold btn-sm">Deactivate your account ?</button>
+                                            <div class="form-text text-muted mt-3">After you log in, you will be asked for additional information to confirm your identity and protect your account from being compromised.
+                                            <a href="#">Learn more</a>.</div>
+                                        </div>
+                                    </div>
+                                 
+                                    
+                                </div>
                             </div>
                             <div class="col-xl-2"></div>
                         </div>
@@ -220,27 +206,30 @@
 
 <script type="text/javascript">
 $(document).ready(function(){
-    let paramid = new URLSearchParams(window.location.search).get('id');
+    let url = window.location.href;
+    let split = url.split('/');
+    let paramid = split[split.length - 1];
+    // console.log(paramid);
     let type = new URLSearchParams(window.location.search).get('view');
     if (paramid === null && type== null){
-        $('#pegawai_form_title').text('Tambah Data Pegawai');
+        $('#pegawai_form_title').text('Tambah');
         $('#nama').val('');
         $('#alamat').val('');
         $('#email').val('');
         $('#tanggal_lahir').val('');
         $('#no_telf').val('');
-        // $('#foto').val('');
+        $('#foto').val('');
         $('#jabatan').val('');
         $('#pendidikan').val('');
         
         trigerUpdate = false;
     } else if ( paramid !== null && type== null){
         idparam =paramid;
-        $('#pegawai_form_title').text('Edit Data Pegawai');
+        $('#pegawai_form_title').text('Edit Profil');
         preparedit(paramid);
     } else if (type !== null && paramid !== null) {
         idparam =paramid;
-        $('#pegawai_form_title').text('View Data Pegawai');
+        $('#pegawai_form_title').text('View Profil');
         preparedit(paramid);
         $('#nama').prop('disabled', true);
         $('#alamat').prop('disabled', true);
@@ -253,8 +242,7 @@ $(document).ready(function(){
     }
 });
 
-
-
+let passwordhint = '';
 
 function preparedit(paramid) {
     $.ajax({  
@@ -274,6 +262,7 @@ function preparedit(paramid) {
             )
     },
     success : function(result){
+        // console.log(result);
         trigerUpdate = true;
         $('#nama').val(result.success[0].nama_pegawai);
         $('#alamat').val(result.success[0].alamat);
@@ -282,13 +271,12 @@ function preparedit(paramid) {
         $('#jabatan').val(result.success[0].jabatan);
         $('#tanggal_lahir').val(result.success[0].tanggal_lahir);
         $('#pendidikan').val(result.success[0].jenjang_pendidikan);
+        passwordhint = result.success[0].password;
 
-        // if (result.success[0].foto){
-        //     var photoUrl = '{{ url("/") }}' + '/photoprofile/' + result.success[0].foto;
-        //     $('#show_img').css('background-image', 'url(' + photoUrl + ')');
-        // }
-       
-        // console.log(photoUrl);
+        if (result.success[0].foto){
+            var photoUrl = '{{ url("/") }}' + '/photoprofile/' + result.success[0].foto;
+            $('#show_img').css('background-image', 'url(' + photoUrl + ')');
+        }
     }
     
 });
@@ -303,13 +291,13 @@ function add() {
     var no_telp = $('#no_telf').val();
     var foto =  $('#foto').val();
     var jabatan = $('#jabatan').val();
-    var password = 'default321';
+    var password = passwordhint;
     var pendidikan = $('#pendidikan').val();
 
-    // var img = $('#file').val();
-    // var myimg = document.getElementById('file');
+    var img = $('#file').val();
+    var myimg = document.getElementById('file');
 
-    if (!nama || !alamat || !email || !tgl_lahir || !no_telf || !jabatan) {
+    if (!nama || !alamat || !email || !tgl_lahir || !no_telf ) {
         swal.fire({
         position: "center",
         icon: "error",
@@ -329,7 +317,7 @@ function add() {
         file.append('param_password',password);
         file.append('param_tgllahir',tgl_lahir);
         file.append('param_pendidikan',pendidikan);
-        // file.append('param_file',$("#file")[0].files[0]); 
+        file.append('param_file',$("#file")[0].files[0]); 
 
         $.ajax({
             url : (!trigerUpdate?"{{ route('pegawai_add') }}":"{{ route('pegawai_edit') }}"),
@@ -358,7 +346,7 @@ function add() {
                         text: 'Data berhasil disimpan',
                     }).then((result) => {
                         if (result.value || result.isDismissed) {
-                            window.location.href = "{{ route('pegawai') }}"; 
+                            window.location.reload(); 
                         }
                     }); 
                 } else{
@@ -374,52 +362,6 @@ function add() {
 
     }
 
-    
-    // $.ajax({  
-    //     url : (!trigerUpdate?"{{ route('pegawai_add') }}":"{{ route('pegawai_edit') }}"),
-    //     type : "post",
-    //     data: {
-    //         "_token": "{{ csrf_token() }}",
-    //         param_id:idparam,
-    //         param_nama:nama,
-    //         param_alamat:alamat,
-    //         param_email:email,
-    //         param_notelp:no_telp,
-    //         param_jabatan:jabatan,
-    //         param_password:password,
-    //         param_tgllahir:tgl_lahir,
-    //         param_pendidikan:pendidikan
-    //         },
-    //     dataType : "json",
-    //     async : false,
-    //     error: function(xhr, errorType, thrownError) {
-    //         console.error("Kesalahan AJAX:", thrownError);
-    //         Swal.fire(
-    //                 'Error!',
-    //                 thrownError,
-    //                 'error'
-    //             )
-    //     },
-    //     success : function(result){
-    //         if(result.success){
-    //             Swal.fire({
-    //                 icon: 'success',
-    //                 title: 'Berhasil Simpan Data !',
-    //                 text: 'Data berhasil disimpan',
-	// 		    }).then((result) => {
-    //                 if (result.value || result.isDismissed) {
-    //                     window.location.href = "{{ route('pegawai') }}"; 
-    //                 }
-    //              }); 
-    //     	} else{
-    //             Swal.fire({
-    //                 icon: 'warning',
-    //                 title: 'Gagal Simpan Data!',
-    //                 text: 'Tidak ada perubahan pada data!',
-	// 		    })
-    //         }
-    //     }
-    // });
 
 	
 }

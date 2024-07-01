@@ -25,6 +25,16 @@ class UserController extends Controller
         return view('content.user.user_add');
     }
 
+    public function user_session() {
+        $users = DB::table('pegawais')
+        ->where('idpegawai' , session('id'))
+        ->get();
+        return [
+            'data' => $users
+        ];
+       
+    }
+
 
     public function user_json()
     {

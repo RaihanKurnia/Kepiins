@@ -334,8 +334,7 @@ class CustomerController extends Controller
 
     public function customer_all_acc() {
         try{
-            $customers = Customer::with(['pegawai:idpegawai,nama_pegawai']) // Load related pegawai with only idpegawai and nama_pegawai
-            ->get()
+            $customers = Customer::with(['pegawai:idpegawai,nama_pegawai']) 
             ->map(function ($item) {
 
                 $customerArray = $item->toArray();

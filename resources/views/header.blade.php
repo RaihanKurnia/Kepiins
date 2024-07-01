@@ -150,9 +150,9 @@
                 <div class="topbar-item" data-toggle="dropdown" data-offset="10px,0px">
                     <div class="btn btn-icon w-auto btn-clean d-flex align-items-center btn-lg px-2">
                         <span class="text-muted font-weight-bold font-size-base d-none d-md-inline mr-1">Hi,</span>
-                        <span class="text-dark-50 font-weight-bolder font-size-base d-none d-md-inline mr-3">{{Session::get('nama')}}</span>
+                        <span class="text-dark-50 font-weight-bolder font-size-base d-none d-md-inline mr-3" id="namaheader"></span>
                         <span class="symbol symbol-35 symbol-light-success">
-                            <span class="symbol-label font-size-h5 font-weight-bold">{{ substr(Session::get('nama'), 0, 1) }}</span>
+                            <span class="symbol-label font-size-h5 font-weight-bold" id="prefix"></span>
                         </span>
                     </div>
                 </div>
@@ -161,7 +161,14 @@
                 <div class="dropdown-menu p-0 m-0 dropdown-menu-anim-up dropdown-menu-sm dropdown-menu-right">
                     <!--begin::Nav-->
                     <ul class="navi navi-hover py-4">
-                        <!--begin::Item-->
+                        <li class="navi-item">
+                            <a href="{{asset('/user_profil/view_form')}}/{{Session::get('id')}}" class="navi-link">
+                                <span class="symbol symbol-20 mr-3">
+                                   
+                                </span>
+                                <span class="navi-text">Profil</span>
+                            </a>
+                        </li>
                         <li class="navi-item">
                             <a href="{{asset('/logout')}}" class="navi-link">
                                 <span class="symbol symbol-20 mr-3">
@@ -182,6 +189,36 @@
     </div>
     <!--end::Container-->
 </div>
+
+<script type="text/javascript">
+     $(document).ready(function(){
+        $.ajax({  
+            url : "{{route('user_session')}}",
+            data: {
+                "_token": "{{ csrf_token() }}"
+            },
+            type : "post",
+            dataType : "json",
+            async : false,
+            error: function(xhr, errorType, thrownError) {
+                console.error("Kesalahan AJAX:", thrownError);
+                Swal.fire(
+                        'Error!',
+                        thrownError,
+                        'error'
+                    )
+            },
+            success : function(result) {
+                // console.log(result.data[0].nama_pegawai);
+                $('#namaheader').text(result.data[0].nama_pegawai);
+                $('#prefix').text(result.data[0].nama_pegawai.substring(0, 1));
+                // {{ substr(Session::get('nama'), 0, 1) }}
+            }
+        });
+
+    });
+</script>
+
 @php
     $role = Session::get('role');
 @endphp

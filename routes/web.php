@@ -63,12 +63,16 @@ Route::get('/session', [UserController::class, 'session'])->name('session');
 
 Route::group(['middleware' => 'CekLogin'], function() {
 
+    Route::post('/user/session', [UserController::class, 'user_session'])->name('user_session');
+
     //DASHBOARD
     Route::get('/dashboard', function () {return view('content.dashboard');
     })->name('dashboard');
+    
 
     Route::post('/dashboard/chart1', [DashboardController::class, 'chart'])->name('chart');
     Route::post('/dashboard/chart2', [DashboardController::class, 'chart_manager'])->name('chart_manager');
+    Route::post('/dashboard/photo', [DashboardController::class, 'photoprofile'])->name('photoprofile');
 
     
     //USER
@@ -89,6 +93,7 @@ Route::group(['middleware' => 'CekLogin'], function() {
     Route::post('/pegawai/data_edit',[PegawaiController::class, 'pegawai_edit'])->name('pegawai_edit');
     Route::post('/pegawai/data_add',[PegawaiController::class, 'pegawai_add'])->name('pegawai_add');
     Route::post('/pegawai/data_remove',[PegawaiController::class, 'pegawai_remove'])->name('data_remove');
+    Route::get('/user_profil/view_form/{id}',[PegawaiController::class, 'user_add_view']);
 
     // JABATAN
     Route::get('/jabatan', [JabatanController::class, 'jabatan'])->name('jabatan');

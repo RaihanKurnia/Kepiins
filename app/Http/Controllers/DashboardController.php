@@ -41,42 +41,15 @@ class DashboardController extends Controller
         $nilai2default = $defaultvalues();
         $nilai3default = $defaultvaluespelanggaran();
         
-        // $resultsnilai1 = DB::table('customers')
-        //     ->select(DB::raw('QUARTER(created_at) as triwulan, COUNT(*) as total'))
-        //     ->where('idpegawai_input', session('id'))
-        //     ->where('status_app_data_customer', '1')
-        //     ->whereYear('created_at', $year)
-        //     ->groupBy(DB::raw('QUARTER(created_at)'))
-        //     ->get();
 
-
-            $resultsnilai1 = DB::table('detail_penilaians')
+        $resultsnilai1 = DB::table('detail_penilaians')
         ->where('jenis_penilaian', 'customer')
-        // ->where(DB::raw('YEAR(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d"))'),$year)
         ->where('pegawai_idpegawai', session('id'))
         ->select(
             DB::raw('QUARTER(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d")) as triwulan'),
-            // DB::raw('COUNT(iddetail_penialaian) as jumlah_all_pegawai'),
             DB::raw('nilai as nilai')
-            // DB::raw('SUM(nilai)/COUNT(iddetail_penialaian) as nilai'),
             )
-        // ->groupBy(DB::raw('QUARTER(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d"))'))
         ->get();
-
-        // return $resultsnilai1;
-
-
-
-        // $resultsnilai2 = Pesanan::with(['customer.pegawai'])
-        //     ->whereHas('customer', function ($query) {
-        //         $query->where('idpegawai_input', session('id'));
-        //     })
-        //     ->where('status_app_pesanan', '1')
-        //     ->select(DB::raw('QUARTER(created_at) as triwulan, SUM(jumlah_order) as total'))
-        //     ->whereYear('created_at', $year)
-        //     ->groupBy(DB::raw('QUARTER(created_at)'))
-        //     ->get();
-            
 
         $resultsnilai2 = DB::table('detail_penilaians')
         ->where('jenis_penilaian', 'tender')
@@ -84,72 +57,37 @@ class DashboardController extends Controller
         ->where('pegawai_idpegawai', session('id'))
         ->select(
             DB::raw('QUARTER(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d")) as triwulan'),
-            // DB::raw('COUNT(iddetail_penialaian) as jumlah_all_pegawai'),
             DB::raw('nilai as nilai'),
-            // DB::raw('SUM(nilai)/COUNT(iddetail_penialaian) as nilai'),
             )
-        // ->groupBy(DB::raw('QUARTER(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d"))'))
         ->get();
-        // dump($resultsnilai2);
-            
-        // $resultsnilai3 = DB::table('pelanggarans')
-        //     ->select(DB::raw('QUARTER(waktu_pelanggaran) as triwulan, COUNT(*) as total'))
-        //     ->where('pegawai_idbpegawai', '3')
-        //     // ->where('pegawai_idbpegawai', session('id'))
-        //     ->whereYear('waktu_pelanggaran', $year)
-        //     ->groupBy(DB::raw('QUARTER(waktu_pelanggaran)'))
-        //     ->get();
+     
 
-            $resultsnilai3 = DB::table('detail_penilaians')
+        $resultsnilai3 = DB::table('detail_penilaians')
         ->where('jenis_penilaian', 'pelanggaran')
         ->where('pegawai_idpegawai', session('id'))
         ->where(DB::raw('YEAR(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d"))'),$year)
         ->select(
             DB::raw('QUARTER(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d")) as triwulan'),
-            // DB::raw('COUNT(iddetail_penialaian) as jumlah_all_pegawai'),
             DB::raw('nilai as nilai'),
-            // DB::raw('SUM(nilai)/COUNT(iddetail_penialaian) as nilai'),
             )
-        // ->groupBy(DB::raw('QUARTER(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d"))'))
         ->get();
             
 
         foreach ($resultsnilai1 as $resultnilai1) {
             $total = $resultnilai1->nilai;
-            // if ($total < 30) {
-            //     $total = 5;
-            // } elseif ($total >= 30 && $total <= 60) {
-            //     $total = 7;
-            // } else {
-            //     $total = 9;
-            // }
             $nilai1default[$resultnilai1->triwulan] = $total;
         }
 
         foreach ($resultsnilai2 as $resultnilai2) {
             $total = $resultnilai2->nilai;
-            // if ($total <300) {
-            //     $total = 5;
-            // } elseif ($total >= 300 && $total <= 1500) {
-            //     $total = 7;
-            // } else {
-            //     $total = 9;
-            // }
             $nilai2default[$resultnilai2->triwulan] = $total;
         }
        
-
-       
         foreach ($resultsnilai3 as $resultnilai3) {
             $total = $resultnilai3->nilai;
-            // if ($total ==1 ) {
-            //     $total = 7;
-            // } else {
-            //     $total = 5;
-            // }
             $nilai3default[$resultnilai3->triwulan] = $total;
         }
-       
+
         
         $nilai1 = [
             'name' => 'Nilai Input Customer',
@@ -166,11 +104,44 @@ class DashboardController extends Controller
             'data' => array_values($nilai3default)
         ];
 
+        $rekomenperiode1 = (ROUND((($nilai1['data'][0])*0.25),2))+(ROUND((($nilai2['data'][0])*0.5),2))+(ROUND((($nilai3['data'][0])*0.25),2));
+        $rekomenperiode2 = (ROUND((($nilai1['data'][1])*0.25),2))+(ROUND((($nilai2['data'][1])*0.5),2))+(ROUND((($nilai3['data'][1])*0.25),2));
+        $rekomenperiode3 = (ROUND((($nilai1['data'][2])*0.25),2))+(ROUND((($nilai2['data'][2])*0.5),2))+(ROUND((($nilai3['data'][2])*0.25),2));
+        $rekomenperiode4 = (ROUND((($nilai1['data'][3])*0.25),2))+(ROUND((($nilai2['data'][3])*0.5),2))+(ROUND((($nilai3['data'][3])*0.25),2));
+
+        $averagerekomen = ROUND((($rekomenperiode1+$rekomenperiode2+$rekomenperiode3+$rekomenperiode4)/4),2);
+
+        $jumlahcustomerall = DB::table('customers')
+        ->where('idpegawai_input', session('id'))
+        ->where('status_app_data_customer','1')
+        ->count();
+
+
+        
+
+        $jumlahpesanantenderrall = Pesanan::with(['customer.pegawai'])
+        ->whereHas('customer', function ($query) {
+            $query->where('idpegawai_input', session('id'));
+        })
+        ->where('status_app_pesanan','1')
+        ->sum('jumlah_order');
+
+
+        $jumlahpelanggaranall = DB::table('pelanggarans')
+        ->where('pegawai_idbpegawai', session('id'))
+        ->count();
+
+        // return $jumlahpesanantenderrall;
+
 
         return [
             'nilai1'    => $nilai1,
             'nilai2'    => $nilai2,
             'nilai3'    => $nilai3,
+            'nilaiRekomen' => $averagerekomen,
+            'jmlhcustomer' => $jumlahcustomerall,
+            'jmlhpesanan' =>$jumlahpesanantenderrall,
+            'jmlhpelanggaran'=>$jumlahpelanggaranall,
             'message'   => true
         ];  
         
@@ -210,37 +181,7 @@ class DashboardController extends Controller
         $nilai2default = $defaultvalues();
         $nilai3default = $defaultvaluespelanggaran();
         
-        // $resultsnilai1 = DB::table('customers')
-        //     ->select(DB::raw('QUARTER(created_at) as triwulan, COUNT(*) as total',
-        //     DB::table('customers')->select(DB::raw('QUARTER(created_at) as triwulan, COUNT() as total'))
-        //     ))
-        //     // ->where('idpegawai_input', session('id'))
-        //     ->where('status_app_data_customer', '1')
-        //     ->whereYear('created_at', $year)
-        //     ->groupBy(DB::raw('QUARTER(created_at)'))
-        //     ->get();
-
-        // $resultsnilai1 = DB::table('detail_penilaians')
-        // ->where('jenis_penilaian', 'customer')
-        // ->where(DB::raw('YEAR(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d"))'),$year)
-        // ->select(
-        //     DB::raw('QUARTER(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d")) as triwulan'),
-        //     DB::raw('COUNT(iddetail_penialaian) as jumlah_all_pegawai'),
-        //     DB::raw('SUM(nilai) as total_nilai'),
-        //     DB::raw('SUM(nilai)/COUNT(iddetail_penialaian) as nilai'),
-        //     )
-        // ->groupBy(DB::raw('QUARTER(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d"))'))
-        // ->get();
-
-        // $resultsnilai1 = DB::table('detail_penilaians as nilai')
-        // ->rightjoin('pegawais as peg','peg.idpegawai','=','nilai.pegawai_idpegawai')
-        // ->where('peg.role','Pegawai')
-        // ->where('jenis_penilaian', 'customer')
-        // ->select(
-        //     DB::raw('QUARTER(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d")) as triwulan'),
-        //     DB::raw('COUNT(idpegawai) as nilai'),
-        //     )
-        // ->get();
+        
 
         $resultsnilai1 = DB::table('detail_penilaians as nilai')
         ->where('jenis_penilaian', 'customer')
@@ -253,29 +194,7 @@ class DashboardController extends Controller
 
         
 
-        // return $resultsnilai1;
-        
-        // $resultsnilai2 = Pesanan::with(['customer.pegawai'])
-        //     ->whereHas('customer', function ($query) {
-        //         // $query->where('idpegawai_input', session('id'));
-        //     })
-        //     ->where('status_app_pesanan', '1')
-        //     ->select(DB::raw('QUARTER(created_at) as triwulan, SUM(jumlah_order) as total'))
-        //     ->whereYear('created_at', $year)
-        //     ->groupBy(DB::raw('QUARTER(created_at)'))
-        //     ->get();
-
-        // $resultsnilai2 = DB::table('detail_penilaians')
-        // ->where('jenis_penilaian', 'tender')
-        // ->where(DB::raw('YEAR(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d"))'),$year)
-        // ->select(
-        //     DB::raw('QUARTER(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d")) as triwulan'),
-        //     DB::raw('COUNT(iddetail_penialaian) as jumlah_all_pegawai'),
-        //     DB::raw('SUM(nilai) as total_nilai'),
-        //     DB::raw('SUM(nilai)/COUNT(iddetail_penialaian) as nilai'),
-        //     )
-        // ->groupBy(DB::raw('QUARTER(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d"))'))
-        // ->get();
+       
 
         $resultsnilai2 = DB::table('detail_penilaians as nilai')
         ->where('jenis_penilaian', 'tender')
@@ -286,27 +205,7 @@ class DashboardController extends Controller
             ->groupBy(DB::raw('QUARTER(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d"))'))
         ->get();
 
-        // return $resultsnilai2;
-            
-        // $resultsnilai3 = DB::table('pelanggarans')
-        //     ->select(DB::raw('QUARTER(waktu_pelanggaran) as triwulan, COUNT(*) as total'))
-        //     ->where('pegawai_idbpegawai', '3')
-        //     // ->where('pegawai_idbpegawai', session('id'))
-        //     ->whereYear('waktu_pelanggaran', $year)
-        //     ->groupBy(DB::raw('QUARTER(waktu_pelanggaran)'))
-        //     ->get();
-
-        // $resultsnilai3 = DB::table('detail_penilaians')
-        // ->where('jenis_penilaian', 'pelanggaran')
-        // ->where(DB::raw('YEAR(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d"))'),$year)
-        // ->select(
-        //     DB::raw('QUARTER(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d")) as triwulan'),
-        //     DB::raw('COUNT(iddetail_penialaian) as jumlah_all_pegawai'),
-        //     DB::raw('SUM(nilai) as total_nilai'),
-        //     DB::raw('SUM(nilai)/COUNT(iddetail_penialaian) as nilai'),
-        //     )
-        // ->groupBy(DB::raw('QUARTER(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d"))'))
-        // ->get();
+    
 
         $resultsnilai3 = DB::select(
             "SELECT '1' AS triwulan, ROUND(AVG(COALESCE(dp.nilai, 9)),1) AS nilai
@@ -398,5 +297,13 @@ class DashboardController extends Controller
         
     
       
+    }
+
+    public function photoprofile() {
+        $photo = DB::table('pegawais')
+        ->select('foto')
+        ->where('idpegawai',  session('id'))
+        ->get();
+        return $photo[0];
     }
 }
