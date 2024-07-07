@@ -581,102 +581,112 @@ class TenderController extends Controller
 
     public function tender_approval_action(Request $request) 
     {
-        // dump($request);
+        // return($request);
         DB::beginTransaction();
        
         try {
             $year = Carbon::now()->year;
-            $result = Pesanan::where('id_pesanan', $request->param_ord)
-            ->update([
-                'status_app_pesanan'=> $request->param_triger
-                
-            ]);
-
-            if ($result) {
-                $tenderacc = Pesanan::select('pesanans.*','customers.idpegawai_input')
-                ->where('pesanans.id_pesanan', $request->param_ord)
-                ->join('customers','pesanans.customer_idcustomer','=','customers.idcustomer')
-                ->first();
-
-                $tanggalpemesanan = Carbon::parse($tenderacc->tanggal_pemesanan);
-                $tenderacc_year = $tanggalpemesanan->year;
-                $tenderacc_quarter = $tanggalpemesanan->quarter;
-
-           
-
-                
-                
-                if ($tenderacc){
-                    $jumlahorder = Pesanan::select(DB::raw('SUM(jumlah_order) AS jumlah_order'))
+            $nilaimessage = 0;
+            
+            if ($request->param_triger == 1){
+                $result = Pesanan::where('id_pesanan', $request->param_ord)
+                ->update([
+                    'status_app_pesanan'=> $request->param_triger
+                ]);
+                if ($result) {
+                    $tenderacc = Pesanan::select('pesanans.*','customers.idpegawai_input')
+                    ->where('pesanans.id_pesanan', $request->param_ord)
                     ->join('customers','pesanans.customer_idcustomer','=','customers.idcustomer')
-                    ->where('idpegawai_input',$tenderacc->idpegawai_input)
-                    ->where('status_app_pesanan','1')
-                    ->where(DB::raw('YEAR(STR_TO_DATE(tanggal_pemesanan, "%Y-%m-%d"))'),$tenderacc_year)
-                    ->where(DB::raw('QUARTER(STR_TO_DATE(tanggal_pemesanan, "%Y-%m-%d"))'),$tenderacc_quarter)
-                    ->groupBy(DB::raw('YEAR(STR_TO_DATE(tanggal_pemesanan, "%Y-%m-%d"))'), DB::raw('QUARTER(STR_TO_DATE(tanggal_pemesanan, "%Y-%m-%d"))'))
-                    ->get();
-
+                    ->first();
+    
+                    $tanggalpemesanan = Carbon::parse($tenderacc->tanggal_pemesanan);
+                    $tenderacc_year = $tanggalpemesanan->year;
+                    $tenderacc_quarter = $tanggalpemesanan->quarter;
+    
+               
+    
+                   
                     
-
-                    // return $jumlahorder;
-                    // foreach ($jumlahorder as $jumlahorder_nilai) {
-                        if ($jumlahorder[0]->jumlah_order < 300) {
-                            $nilai = 5;
-                        } elseif ($jumlahorder[0]->jumlah_order >= 300 && $jumlahorder[0]->jumlah_order <= 1500) {
-                            $nilai = 7;
-                        } else {
-                            $nilai = 9;
-                        }
-                    // }
-
-                    // return $nilai;
-                    
-                    // if ($jumlahorder[0]->jumlah_order < 300) {
-                    //     $nilai = 5;
-                    // } elseif ($jumlahorder[0]->jumlah_order >= 300 && $jumlahorder[0]->jumlah_order <= 1500) {
-                    //     $nilai = 7;
-                    // } else {
-                    //     $nilai = 9;
-                    // }
-
-                    // return [$nilai];
-
-                     //cek apakh sudah ada que dan year yg sama
-                     $tendernilai = Penilaian::where('pegawai_idpegawai', $tenderacc->idpegawai_input)
-                     ->where('jenis_penilaian','tender')
-                     ->where(DB::raw('YEAR(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d"))'),$tenderacc_year)
-                     ->where(DB::raw('QUARTER(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d"))'),$tenderacc_quarter)
-                     ->first();
-
-                       if(!$tendernilai){
-                        Penilaian::create([
-                            'nilai' => $nilai ,
-                            'jenis_penilaian' => 'tender',
-                            'pegawai_idpegawai' =>  $tenderacc->idpegawai_input,
-                            'periode' => $tenderacc_year,
-                            'tanggal_penilaian'=>Carbon::createFromFormat('Y-m-d H:i:s', $tenderacc->tanggal_pemesanan)
-                        ]);
-                        $nilaimessage = 'insert nilai baru';
-                       } else{
-                            if($tendernilai->nilai != $nilai){
-                                $tendernilai->update([
-                                    'nilai' => $nilai
-                                ]);
-                                $nilaimessage = 'update nilai to '.$nilai;
+                    if ($tenderacc){
+                        $jumlahorder = Pesanan::select(DB::raw('SUM(jumlah_order) AS jumlah_order'))
+                        ->join('customers','pesanans.customer_idcustomer','=','customers.idcustomer')
+                        ->where('idpegawai_input',$tenderacc->idpegawai_input)
+                        ->where('status_app_pesanan','1')
+                        ->where(DB::raw('YEAR(STR_TO_DATE(tanggal_pemesanan, "%Y-%m-%d"))'),$tenderacc_year)
+                        ->where(DB::raw('QUARTER(STR_TO_DATE(tanggal_pemesanan, "%Y-%m-%d"))'),$tenderacc_quarter)
+                        ->groupBy(DB::raw('YEAR(STR_TO_DATE(tanggal_pemesanan, "%Y-%m-%d"))'), DB::raw('QUARTER(STR_TO_DATE(tanggal_pemesanan, "%Y-%m-%d"))'))
+                        ->get();
+    
+                        
+    
+                        // return $jumlahorder;
+                        // foreach ($jumlahorder as $jumlahorder_nilai) {
+                            if ($jumlahorder[0]->jumlah_order < 300) {
+                                $nilai = 5;
+                            } elseif ($jumlahorder[0]->jumlah_order >= 300 && $jumlahorder[0]->jumlah_order <= 1500) {
+                                $nilai = 7;
                             } else {
-                                $nilaimessage = 'No update nilai';
+                                $nilai = 9;
                             }
-                       };
+                        // }
+    
+                        // return $nilai;
+                        
+                        // if ($jumlahorder[0]->jumlah_order < 300) {
+                        //     $nilai = 5;
+                        // } elseif ($jumlahorder[0]->jumlah_order >= 300 && $jumlahorder[0]->jumlah_order <= 1500) {
+                        //     $nilai = 7;
+                        // } else {
+                        //     $nilai = 9;
+                        // }
+    
+                        // return [$nilai];
+    
+                         //cek apakh sudah ada que dan year yg sama
+                         $tendernilai = Penilaian::where('pegawai_idpegawai', $tenderacc->idpegawai_input)
+                         ->where('jenis_penilaian','tender')
+                         ->where(DB::raw('YEAR(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d"))'),$tenderacc_year)
+                         ->where(DB::raw('QUARTER(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d"))'),$tenderacc_quarter)
+                         ->first();
+    
+                           if(!$tendernilai){
+                            Penilaian::create([
+                                'nilai' => $nilai ,
+                                'jenis_penilaian' => 'tender',
+                                'pegawai_idpegawai' =>  $tenderacc->idpegawai_input,
+                                'periode' => $tenderacc_year,
+                                'tanggal_penilaian'=>Carbon::createFromFormat('Y-m-d H:i:s', $tenderacc->tanggal_pemesanan)
+                            ]);
+                            $nilaimessage = 'insert nilai baru';
+                           } else{
+                                if($tendernilai->nilai != $nilai){
+                                    $tendernilai->update([
+                                        'nilai' => $nilai
+                                    ]);
+                                    $nilaimessage = 'update nilai to '.$nilai;
+                                } else {
+                                    $nilaimessage = 'No update nilai';
+                                }
+                           };
+                    }
                 }
+
+            } else {
+                $result = Pesanan::where('id_pesanan', $request->param_ord)
+                ->update([
+                    'status_app_pesanan'=> $request->param_triger,
+                    'note'=> $request->param_note
+                ]);
             }
+            
 
             DB::commit();
             return [
                 'success' => true,
                 'message' => 'Data berhasil disimpan.',
-                'jumlahpesanan' =>$jumlahorder[0]->jumlah_order,
-                'pesananacc_year'=>$tenderacc_year,
-                'pesanancc_quarter' => $tenderacc_quarter,
+                // 'jumlahpesanan' =>$jumlahorder[0]->jumlah_order,
+                // 'pesananacc_year'=>$tenderacc_year,
+                // 'pesanancc_quarter' => $tenderacc_quarter,
                 'nilai'=> $nilaimessage
             ];
 

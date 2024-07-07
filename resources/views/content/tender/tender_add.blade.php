@@ -159,32 +159,13 @@
                                         </div>
                                     </div>
 
-
-                                  
-
-                                    <!-- <div id="pesananlist">
-                                    <label class="col-3">Nama Customer</label>
-                                        <div class="form-group row">
-                                            <label class="col-3"></label>
-                                                <div class="col-6">
-                                                    <input type="text"  id ="nama" class="form-control" placeholder=" Nama Customer" disabled/>
-                                                </div>
-                                                <div class="col-3">
-                                                    <input type="number" id ="jumlah" class="form-control" placeholder="Jumlah Pesanan" />
-                                                </div>
+                                    <div class="form-group row" id="notearea">
+                                        <label class="col-3">Note Rejected</label>
+                                        <div class="col-6">
+                                            <textarea  class="form-control"  value="" id="note" disabled></textarea>
+                                            <!-- <span class="form-text text-muted">Enable clear and today helper buttons</span> -->
                                         </div>
-                                        <div class="form-group row">
-                                                <label class="col-3"></label>
-                                                    <div class="col-6">
-                                                        <input type="text"  id ="nama" class="form-control" placeholder=" Nama Customer" disabled/>
-                                                    </div>
-                                                    <div class="col-3">
-                                                        <input type="number" id ="jumlah" class="form-control" placeholder="Jumlah Pesanan" />
-                                                    </div>
-                                                
-                                        </div>
-                                    </div> -->
-
+                                    </div>
 
                                     
                                 </div>
@@ -224,6 +205,7 @@ $(document).ready(function(){
         $('#tanggal_kirim').val('');
         $('#jml_barang').val('');
         $('#pilih_customer').show();
+        $('#notearea').hide();
         trigerUpdate = false;
         $.ajax({
             url: "{{ route('tender_list') }}", 
@@ -259,6 +241,7 @@ $(document).ready(function(){
 
     } else if ( paramid !== null && type== null){
         $('#pilih_customer').hide();
+        $('#notearea').hide();
         $('#barang').prop('disabled', true);
         idparam =paramid;
         $('#pegawai_form_title').text('Edit Data Tender');
@@ -408,7 +391,13 @@ function preparedit(paramid) {
             )
     },
     success : function(result){
-        // console.log(result.success.);
+        console.log(result.success.note);
+        if (result.success.status_app_pesanan == 2){
+            $('#notearea').show();
+            $('#note').val(result.success.note);
+        } else{
+            $('#notearea').hide();
+        }
         trigerUpdate = true;
         selectcust = result.success.customer.idcustomer;
         $('#nama').val(result.success.customer.nama_customer);

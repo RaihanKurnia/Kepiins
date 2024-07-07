@@ -22,6 +22,7 @@ class CreatePesanansTable extends Migration
             $table->string('pengiriman_idpengiriman')->nullable();
             $table->integer('jumlah_order')->default('0');
             $table->unsignedBigInteger('barang_idbarang');
+            $table->string('note')->nullable();
             $table->timestamp('tanggal_pengiriman')->nullable();
             $table->timestamps();
             

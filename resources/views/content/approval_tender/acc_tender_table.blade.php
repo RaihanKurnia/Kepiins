@@ -412,7 +412,8 @@ function action(data,triger) {
 					data: {
 						"_token": "{{ csrf_token() }}",
 					param_ord:data,
-					param_triger:triger
+					param_triger:triger,
+					param_note :''
 					},
 					dataType : "json",
 			   		async : false,
@@ -452,8 +453,14 @@ function action(data,triger) {
 	} else {
 		swal.fire({
 		title: 'Apakah Anda Yakin?',
-		text: "Data Customer Akan di Reject",
+		text: "Data Customer Akan di Reject, Masukkan Detail :",
 		icon: 'warning',
+		input: "textarea",
+		inputValidator: (value) => {
+			if (!value) {
+				return 'Textarea tidak boleh kosong!';
+			}
+    	},
 		showCancelButton: true,
 		confirmButtonColor: '#6993FF',
 		cancelButtonColor: '#F64E60',
@@ -466,7 +473,8 @@ function action(data,triger) {
 					data: {
 						"_token": "{{ csrf_token() }}",
 					param_ord:data,
-					param_triger:triger
+					param_triger:triger,
+					param_note :result.value
 					},
 					dataType : "json",
 			   		async : false,

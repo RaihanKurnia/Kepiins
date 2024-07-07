@@ -17,12 +17,12 @@ class CreatePegawaiTable extends Migration
         Schema::create('pegawais', function (Blueprint $table) {
             $table->bigIncrements('idpegawai');
             $table->string('nama_pegawai' );
-            $table->string('alamat')->nullable();;
-            $table->date('tanggal_lahir')->nullable();;
-            $table->string('nomor_telepon')->nullable();;
-            $table->string('jenjang_pendidikan')->nullable();;
-            $table->string('foto')->nullable();;
-            $table->string('jabatan')->nullable();;
+            $table->string('alamat')->nullable();
+            $table->date('tanggal_lahir')->nullable();
+            $table->string('nomor_telepon')->nullable();
+            $table->string('jenjang_pendidikan')->nullable();
+            $table->string('foto')->nullable();
+            $table->string('jabatan')->nullable();
             $table->string('password');
             $table->string('email' )->unique();
             $table->enum('role', ['Super Admin','Pegawai','HRD','Manager']);
