@@ -391,7 +391,7 @@ function preparedit(paramid) {
             )
     },
     success : function(result){
-        console.log(result.success.note);
+        // console.log(result.success.note);
         if (result.success.status_app_pesanan == 2){
             $('#notearea').show();
             $('#note').val(result.success.note);

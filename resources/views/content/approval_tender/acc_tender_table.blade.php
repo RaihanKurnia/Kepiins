@@ -458,7 +458,7 @@ function action(data,triger) {
 		input: "textarea",
 		inputValidator: (value) => {
 			if (!value) {
-				return 'Textarea tidak boleh kosong!';
+				return 'Detail tidak boleh kosong!';
 			}
     	},
 		showCancelButton: true,

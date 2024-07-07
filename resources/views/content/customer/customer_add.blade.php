@@ -108,25 +108,13 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- <div  id="pesananrepeat"> 
-                                        <div class="form-group row">
-                                            <label class="col-3">Pesanan</label>
-                                            <div class="col-9" id="listpesanan">
-                                               
-                                            </div>
+                                    <div class="form-group row" id="notearea">
+                                        <label class="col-3">Note Rejected</label>
+                                        <div class="col-6">
+                                            <textarea  class="form-control"  value="" id="note" disabled></textarea>
+                                            <!-- <span class="form-text text-muted">Enable clear and today helper buttons</span> -->
                                         </div>
-                                        
-                                        
-                                        <div class="form-group row">
-                                            <div class="col-3"></div>
-                                            <div class="col-9">
-                                                <div id="tambahpesanan" class="btn font-weight-bold btn-warning">
-                                                <i class="la la-plus"></i>Tambah Pesanan</div>
-                                                <div id="checkpesanan" class="btn font-weight-bold btn-success">
-                                                <i class="la la-plus"></i>check Pesanan</div>
-                                            </div>
-                                        </div>
-                                    </div> -->
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-xl-2"></div>
@@ -237,12 +225,14 @@ $(document).ready(function(){
         $('#alamat').val('');
         $('#no_telp').val('');
         $('#email').val('');
+        $('#notearea').hide();
         // $('#status').empty();
         trigerUpdate = false;
     } else if ( paramid !== null && type== null){       //untuk edit
         idparam =paramid;
         $('#form_title').text('Edit Data Customer');
         preparedit(paramid,type);
+        $('#notearea').hide();
         // $('#status').empty();
     } else if (type !== null && paramid !== null) {     //untuk view
         idparam =paramid;
@@ -281,7 +271,13 @@ function preparedit(paramid,view) {
                 )
         },
         success : function(result){
-            console.log(result.success.nama_customer);
+            
+            if (result.success.status_app_data_customer == 2){
+                $('#notearea').show();
+                $('#note').val(result.success.note);
+            } else{
+                $('#notearea').hide();
+            }
             var data = result.success
             trigerUpdate = true;
             // console.log(initialData);

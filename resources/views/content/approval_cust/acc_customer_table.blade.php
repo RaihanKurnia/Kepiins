@@ -173,10 +173,11 @@ function refreshTable(){
 		autoWidth: false,
 		responsive: true,
 		ajax: {
-		url: "{{route('acc_cust_data')}}",
+			url: "{{route('acc_cust_data')}}",
+			// type: 'POST',
 			error: function(xhr, errorType, thrownError) {
 				$('.dataTables_empty').text("No data available in table");
-				console.error("Kesalahan AJAX:", thrownError);
+				// console.error("Kesalahan AJAX:", thrownError);
 				Swal.fire(
 						'Error!',
 						thrownError,
@@ -184,9 +185,18 @@ function refreshTable(){
 					)
 			},
 			success : function(result){
-				$('#customer-count').text(result.totalcust);
-				$('#totalcustacc').text(result.totalcustacc);
-				$('#poin').text(result.poin);
+				// console.log(result);
+				if (!result.success){
+				$('.dataTables_empty').text("No data available in table");
+					Swal.fire(
+						'Gagal Reject Data!',
+						result.message,
+						'error'
+					)
+				}
+				// $('#customer-count').text(result.totalcust);
+				// $('#totalcustacc').text(result.totalcustacc);
+				// $('#poin').text(result.poin);
 				$('#kt_datatable1').DataTable().rows.add(result.data).draw();
 				
 			},
@@ -392,7 +402,8 @@ function action(data,triger) {
 					data: {
 						"_token": "{{ csrf_token() }}",
 					param_cust:data,
-					param_triger:triger
+					param_triger:triger,
+					param_note :''
 					},
 					dataType : "json",
 			   		async : false,
@@ -432,8 +443,14 @@ function action(data,triger) {
 	} else {
 		swal.fire({
 		title: 'Apakah Anda Yakin?',
-		text: "Data Customer Akan di Reject",
+		text: "Data Customer Akan di Reject, Masukkan Detail : ",
 		icon: 'warning',
+		input: "textarea",
+		inputValidator: (value) => {
+			if (!value) {
+				return 'Detail tidak boleh kosong!';
+			}
+    	},
 		showCancelButton: true,
 		confirmButtonColor: '#6993FF',
 		cancelButtonColor: '#F64E60',
@@ -446,7 +463,8 @@ function action(data,triger) {
 					data: {
 						"_token": "{{ csrf_token() }}",
 					param_cust:data,
-					param_triger:triger
+					param_triger:triger,
+					param_note :result.value
 					},
 					dataType : "json",
 			   		async : false,

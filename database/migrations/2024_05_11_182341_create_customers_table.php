@@ -21,6 +21,7 @@ class CreateCustomersTable extends Migration
             $table->string('email');
             $table->unsignedBigInteger('idpegawai_input');
             $table->enum('status_app_data_customer', ['0', '1','2'])->default('0');
+            $table->string('note')->nullable();
             $table->timestamps();
             
             $table->foreign('idpegawai_input')->references('idpegawai')->on('pegawais')->onDelete('cascade');

@@ -15,6 +15,7 @@ class Customer extends Model
     'alamat',
     'nomor_telefon',
     'email',
+    'note',
     'idpegawai_input'];
 
     public function pegawai()
