@@ -43,7 +43,7 @@
                         </h3>
                     </div>
                     <div class="card-toolbar">
-                        <a href="javascript:void(0);" onclick="window.history.back();" class="btn btn-light-primary font-weight-bolder mr-2">
+                        <a href="{{asset('/dashboard')}}"  class="btn btn-light-primary font-weight-bolder mr-2">
                             <i class="ki ki-long-arrow-back icon-sm"></i>Back</a>
                         <div class="btn-group">
                             <button type="button" class="btn btn-primary font-weight-bolder" onclick="add()" id="save_pegawai">
@@ -177,13 +177,12 @@
                             <div class="col-xl-2"></div>
                             <div class="col-xl-8">
                                 <div class="my-52">
-                                    <h3 class="text-dark font-weight-bold mb-10">Change Password:</h3>
+                                    <h3 class="text-dark font-weight-bold mb-10" >Keamanan:</h3>
                                     <div class="form-group row mt-10">
-                                        <label class="col-3"></label>
+                                        <label class="col-3">Ubah Kata Sandi</label>
                                         <div class="col-9">
-                                            <button type="button" class="btn btn-light-danger font-weight-bold btn-sm">Deactivate your account ?</button>
-                                            <div class="form-text text-muted mt-3">After you log in, you will be asked for additional information to confirm your identity and protect your account from being compromised.
-                                            <a href="#">Learn more</a>.</div>
+                                            <button type="button" class="btn btn-light-danger font-weight-bold btn-sm" data-toggle="modal" data-target="#modal_changepass" id="button_add">Change Password</button>
+                                            <div class="form-text text-muted mt-3">Gunakan tombol "Change Password" untuk memperbarui informasi keamanan akun Anda secara berkala, sehingga akun Anda tetap terlindungi dari akses yang tidak sah.</div>
                                         </div>
                                     </div>
                                  
@@ -193,6 +192,50 @@
                             <div class="col-xl-2"></div>
                         </div>
                     </form>
+                    	<!-- begin:: Modal Add-->
+                        <div class="modal fade" id="modal_changepass" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true" >
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="addModalLabel">Change Password</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <i aria-hidden="true" class="ki ki-close"></i>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="form-group">
+                                             <div class="input-icon input-icon-right">
+                                                <!-- <label>New Password</label> -->
+                                                <input type="password"  id ="newpassword" class="form-control opacity-70 rounded-pill  py-4 px-8 mb-5 " placeholder="New Password" />
+                                                <span>
+                                                    <button class="btn" type="button" id="pass_hide">
+                                                    <!-- <i class=' fas fa-eye'></i> -->
+                                                    <i class=' fas fa-eye-slash'></i>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="input-icon input-icon-right">
+                                                <!-- <label>Confirm Passoword</label> --> 
+                                                <input type="password"  id ="confirmpassword" class="form-control opacity-70 rounded-pill  py-4 px-8 mb-5 " placeholder="Confrim Password" />
+                                                <span>
+                                                    <button class="btn" type="button" id="pass_hide_confirm">
+                                                    <!-- <i class=' fas fa-eye'></i> -->
+                                                    <i class=' fas fa-eye-slash'></i>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary font-weight-bold"  onclick="changepassword()">Save changes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end:: Modal Add -->
                     <!--end::Form-->
                 </div>
             </div>
@@ -242,6 +285,22 @@ $(document).ready(function(){
     }
 });
 
+$('#pass_hide,#pass_hide_confirm ').click(function(){
+    var passwordInput;
+    var icon;
+
+    if ($(this).attr('id') === 'pass_hide') {
+        passwordInput = $('#newpassword');
+        icon = $(this).find('i');
+    } else if ($(this).attr('id') === 'pass_hide_confirm') {
+        passwordInput = $('#confirmpassword');
+        icon = $(this).find('i');
+    }
+    var newType = (passwordInput.attr('type') === 'password') ? 'text' : 'password';
+    passwordInput.attr('type', newType);
+    icon.toggleClass('fas fa-eye-slash fas fa-eye');
+});
+
 let passwordhint = '';
 
 function preparedit(paramid) {
@@ -279,7 +338,7 @@ function preparedit(paramid) {
         }
     }
     
-});
+    });
 }
 let idparam='';
 
@@ -291,7 +350,7 @@ function add() {
     var no_telp = $('#no_telf').val();
     var foto =  $('#foto').val();
     var jabatan = $('#jabatan').val();
-    var password = passwordhint;
+    // var password = passwordhint;
     var pendidikan = $('#pendidikan').val();
 
     var img = $('#file').val();
@@ -314,7 +373,7 @@ function add() {
         file.append('param_email',email);
         file.append('param_notelp',no_telp);
         file.append('param_jabatan',jabatan);
-        file.append('param_password',password);
+        // file.append('param_password',password);
         file.append('param_tgllahir',tgl_lahir);
         file.append('param_pendidikan',pendidikan);
         file.append('param_file',$("#file")[0].files[0]); 
@@ -385,6 +444,71 @@ $('#file').on('change', function(){
         }
     }
 })
+
+function changepassword() {
+    var newpassowrd = $('#newpassword').val();
+    var confirmpassword = $('#confirmpassword').val();
+    // console.log(session);
+    
+    if ( newpassowrd != confirmpassword ) {
+        swal.fire({
+        position: "center",
+        icon: "error",
+        title: "New Password and Confirm Password does not match",
+        showConfirmButton: true,
+        // timer: 1000,
+         });
+        return; 
+    } else {
+        $.ajax({  
+        url : "{{ route('changepassword') }}",
+        type : "POST", 
+        data: {
+            "_token": "{{ csrf_token() }}",
+            newpassowrd: newpassowrd
+        },
+        dataType : "json",
+        async : false,
+        error: function(xhr, errorType, thrownError) {
+            console.error("Kesalahan AJAX:", thrownError);
+            Swal.fire(
+                    'Error!',
+                    thrownError,
+                    'error'
+                )
+        },
+        success : function(result){
+            console.log(result);
+            if(result.success){
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil Simpan Data !',
+                        text: result.message,
+                    }).then((result) => {
+                        if (result.value || result.isDismissed) {
+                            window.location.href="{{ asset('/logout') }}"; 
+                        }
+                    }); 
+                } else{
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Gagal Simpan Data!',
+                        text: 'Tidak ada perubahan pada data!',
+                    })
+                }
+           
+        }
+        
+        });
+    }
+
+}
+
+$('#button_add').click(function () {
+    $('#newpassword').val('');
+    $('#confirmpassword').val('');
+    });
+
 
 </script>
 

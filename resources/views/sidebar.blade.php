@@ -3,8 +3,10 @@
     <!--begin::Brand-->
     <div class="brand flex-column-auto" id="kt_brand">
         <!--begin::Logo-->
-        <a href="index.html" class="brand-logo">
-            <img alt="Logo" src="{{asset('assets/media/logos/logo-light.png')}}" />
+        <a href="{{asset('/dashboard')}}" class="brand-logo">
+            <img alt="Logo" src="{{asset('assets/media/logos/logo-kepiins-mini.png')}}" />
+            <!-- <img alt="Logo" src="{{asset('assets/media/logos/logo-light.png')}}" /> -->
+
         </a>
         <!--end::Logo-->
         <!--begin::Toggle-->

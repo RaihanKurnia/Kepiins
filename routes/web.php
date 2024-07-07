@@ -94,6 +94,7 @@ Route::group(['middleware' => 'CekLogin'], function() {
     Route::post('/pegawai/data_add',[PegawaiController::class, 'pegawai_add'])->name('pegawai_add');
     Route::post('/pegawai/data_remove',[PegawaiController::class, 'pegawai_remove'])->name('data_remove');
     Route::get('/user_profil/view_form/{id}',[PegawaiController::class, 'user_add_view']);
+    Route::post('/changepassword',[PegawaiController::class, 'changepassword'])->name('changepassword');
 
     // JABATAN
     Route::get('/jabatan', [JabatanController::class, 'jabatan'])->name('jabatan');

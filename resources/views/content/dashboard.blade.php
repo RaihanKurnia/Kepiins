@@ -341,7 +341,7 @@
                 )
         },
           success : function(result) {
-            console.log(result.data[0].nama_pegawai);
+            // console.log(result.data[0].nama_pegawai);
             $('#namacuy').text(result.data[0].nama_pegawai);
         }
     });

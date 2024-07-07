@@ -46,8 +46,8 @@
 		<!--begin::Header Mobile-->
 		<div id="kt_header_mobile" class="header-mobile align-items-center header-mobile-fixed">
 			<!--begin::Logo-->
-			<a href="index.html">
-				<img alt="Logo" src="{{asset('assets/media/logos/logo-light.png')}}" />
+			<a href="{{asset('/dashboard')}}">
+				<img alt="Logo" src="{{asset('assets/media/logos/logo-kepiins-mini.png')}}" />
 			</a>
 			<!--end::Logo-->
 			<!--begin::Toolbar-->
@@ -99,15 +99,13 @@
 						<div class="container-fluid d-flex flex-column flex-md-row align-items-center justify-content-between">
 							<!--begin::Copyright-->
 							<div class="text-dark order-2 order-md-1">
-								<span class="text-muted font-weight-bold mr-2">2020©</span>
-								<a href="http://keenthemes.com/metronic" target="_blank" class="text-dark-75 text-hover-primary">Keenthemes</a>
+								<span class="text-muted font-weight-bold mr-2">2024©</span>
+								<a href="#" class="text-dark-75 text-hover-primary">Kepiins</a>
 							</div>
 							<!--end::Copyright-->
 							<!--begin::Nav-->
 							<div class="nav nav-dark">
-								<a href="http://keenthemes.com/metronic" target="_blank" class="nav-link pl-0 pr-5">About</a>
-								<a href="http://keenthemes.com/metronic" target="_blank" class="nav-link pl-0 pr-5">Team</a>
-								<a href="http://keenthemes.com/metronic" target="_blank" class="nav-link pl-0 pr-0">Contact</a>
+								
 							</div>
 							<!--end::Nav-->
 						</div>

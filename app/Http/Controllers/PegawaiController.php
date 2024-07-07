@@ -17,7 +17,12 @@ class PegawaiController extends Controller
     public function pegawai_add_view() {
         return view('content.pegawai.pegawai_add');
     }
-    public function user_add_view() {
+    public function user_add_view($id) {
+     
+        $session = session('id');
+        if ($id != $session ){
+            abort(404);
+        }
         return view('content.profile');
     }
 
@@ -157,7 +162,7 @@ class PegawaiController extends Controller
                 'nomor_telepon'=> $request->param_notelp,
                 'jabatan'=> $request->param_jabatan,
                 'tanggal_lahir'=>$request->param_tgllahir,
-                'password'=> $request->param_password,
+                // 'password'=> $request->param_password,
                 'jenjang_pendidikan'=>$request->param_pendidikan,
                 'foto' => $unq_filename
                 ]);
@@ -179,7 +184,7 @@ class PegawaiController extends Controller
                 'nomor_telepon'=> $request->param_notelp,
                 'jabatan'=> $request->param_jabatan,
                 'tanggal_lahir'=>$request->param_tgllahir,
-                'password'=> $request->param_password,
+                // 'password'=> $request->param_password,
                 'jenjang_pendidikan'=>$request->param_pendidikan
                 ]);
                 DB::commit(); 
@@ -212,6 +217,31 @@ class PegawaiController extends Controller
             'success'   => $result,
             'message'   => ($result?'Success':'Gagal')
         ];
+    }
+
+    public function changepassword(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+           Pegawai::where('idpegawai', session('id'))
+            ->update([
+                'password'=>$request->newpassowrd
+            ]);
+        //   return session('id');
+        DB::commit();
+        return [
+            'success' => true,
+            'message' => 'Untuk Keamanan, Silahkan Login Kembali'
+        ];
+        } catch (\Throwable $th) {
+        DB::rollback();
+        return [
+            'success' => false,
+            'message' => 'Terjadi kesalahan saat update data',
+            'error' => $th->getMessage(),
+            'line' => $th->getLine()
+        ];
+        }
     }
 
 }

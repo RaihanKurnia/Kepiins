@@ -8,8 +8,9 @@
                 <!--begin::Header Nav-->
                 <ul class="menu-nav">
                     <li class="menu-item menu-item-open menu-item-here menu-item-submenu menu-item-rel menu-item-open menu-item-here menu-item-active" data-menu-toggle="click" aria-haspopup="true">
-                    <i class="fa fa-clock text-primary"></i>
-                    <span class="menu-text">Asia/Jakarta,29/05/2024 19:54:18</span>
+                    <i class="fa fa-clock text-primary" style="margin-right:5px;"></i>
+                    <span></span>
+                    <span class="menu-text" id="jam">Asia/Jakarta, -/-/-, -:-:-</span>
  
                     </li>
                     
@@ -216,6 +217,27 @@
             }
         });
 
+        function updateDigitalClock() {
+            const options = {
+                timeZone: 'Asia/Jakarta',
+                hour12: false, // Format 24 jam
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            const now = new Date();
+            const formattedDate = 'Asia/Jakarta, '+now.toLocaleDateString('id-ID', options).replace(/\./g, ':');
+            const JamDigital = document.getElementById('jam');
+            if (JamDigital) {
+                JamDigital.textContent = formattedDate;
+            }
+        }
+        updateDigitalClock();
+        setInterval(updateDigitalClock, 1000);
+
     });
 </script>
 
@@ -228,6 +250,10 @@
 <audio id="notification-sound" src="{{asset('assets/media/notification.mp3')}}" preload="auto"></audio>
 <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
 <script type="text/javascript">
+
+
+
+
     // Enable pusher logging - don't include this in production
     // Pusher.logToConsole = true;
 
@@ -288,10 +314,11 @@
         //     localStorage.removeItem('notifications');
         // }
 
-function audio() {
-    var audio = new Audio('{{asset("assets/media/notification.mp3")}}');
-    audio.play();
+    function audio() {
+        var audio = new Audio('{{asset("assets/media/notification.mp3")}}');
+        audio.play();
+    }
 
-}
+  
 </script>
 @endif
