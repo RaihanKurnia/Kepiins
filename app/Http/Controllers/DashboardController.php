@@ -44,6 +44,7 @@ class DashboardController extends Controller
 
         $resultsnilai1 = DB::table('detail_penilaians')
         ->where('jenis_penilaian', 'customer')
+        ->where(DB::raw('YEAR(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d"))'),$year)
         ->where('pegawai_idpegawai', session('id'))
         ->select(
             DB::raw('QUARTER(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d")) as triwulan'),

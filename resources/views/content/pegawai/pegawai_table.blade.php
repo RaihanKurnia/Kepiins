@@ -71,7 +71,7 @@
 								<th>No Telp</th>
 								<th>Email</th>
 								<th>Jabatan</th>  <!-- id jabatan -->
-								<!-- <th>Pelanggaran</th> -->
+								<th>Nilai</th>
 								<th>Actions</th>
 							</tr>
 						</thead>    
@@ -173,7 +173,18 @@ function refreshTable(){
 			{ data: 'nomor_telepon',name: 'no_telf' },
 			{ data: 'email',name: 'email' },
 			{ data: 'jabatan',name: 'jabatan' },
-	        // { data: 'pelanggaran', name: 'pelanggaran' },
+	        // { data: 'nilai', name: 'nilai' },
+			{
+				data: 'nilai',
+				name: 'nilai',
+				render: function (data, type, row) {
+					if (data > 5.4) {
+						return "<span class='label label-xl label-inline label-light-success'>"+data+"</span>";
+					} else {
+						return  "<span class='label label-xl label-inline label-light-warning'>"+data+"</span>";
+					}
+				}
+			},
 	        { 
 	          // btn ripple- btn-round btn-3d btn-success
 	            "data": "idpegawai",
