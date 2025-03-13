@@ -12,7 +12,7 @@
 				<!--begin::Page Heading-->
 				<div class="d-flex align-items-baseline mr-5">
 					<!--begin::Page Title-->
-					<h5 class="text-dark font-weight-bold my-2 mr-5">Barang</h5>
+					<h5 class="text-dark font-weight-bold my-2 mr-5">Nilai</h5>
 					<!--end::Page Title-->
 					<!--begin::Breadcrumb-->
 					<ul class="breadcrumb breadcrumb-transparent breadcrumb-dot font-weight-bold p-0 my-2 font-size-sm">
@@ -20,7 +20,7 @@
 							<a href="" class="text-muted">Data Master</a>
 						</li>
 						<li class="breadcrumb-item">
-							<a href="" class="text-muted">Barang</a>
+							<a href="" class="text-muted">Nilai</a>
 						</li>
 					</ul>
 					<!--end::Breadcrumb-->
@@ -48,15 +48,19 @@
 			<div class="card card-custom gutter-b">
 				<div class="card-header flex-wrap border-0 pt-6 pb-0">
 					<div class="card-title">
-						<h3 class="card-label">Master Data Table Barang
-						<span class="d-block text-muted pt-2 font-size-sm">Data Table Barang</span></h3>
+						<h3 class="card-label">Master Data Table Nilai
+						<span class="d-block text-muted pt-2 font-size-sm">Data Table Nilai</span></h3>
 					</div>
 					<div class="card-toolbar">
 						<!--begin::Dropdown-->
-				
+						<div class="dropdown dropdown-inline mr-2">
+							<!-- <button type="button" class="btn btn-light-primary font-weight-bolder dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> -->
+							
+
+						</div>
 						<!--end::Dropdown-->
 						<!--begin::Button-->
-						<a href="#" class="btn btn-primary font-weight-bolder" data-toggle="modal" data-target="#modal_add" id="button_add">
+						<a href="{{asset('/nilai/view_form')}}" class="btn btn-primary font-weight-bolder">
 						<span class="svg-icon svg-icon-md">
 							<!--begin::Svg Icon | path:assets/media/svg/icons/Design/Flatten.svg-->
 							<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
@@ -71,92 +75,22 @@
 						<!--end::Button-->
 					</div>
 				</div>
-				<!-- begin:: Modal Add-->
-				<div class="modal fade" id="modal_add" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
-					<div class="modal-dialog modal-dialog-centered" role="document">
-						<div class="modal-content">
-							<div class="modal-header">
-								<h5 class="modal-title" id="addModalLabel"></h5>
-								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-									<i aria-hidden="true" class="ki ki-close"></i>
-								</button>
-							</div>
-							<div class="modal-body">
-								<div class="form-group">
-									<label>Nama Barang</label>
-									<input type="text"  id ="nama" class="form-control" placeholder="Input Nama Barang" />
-								</div>
-								<div class="form-group">
-									<label>Harga</label>
-									<input type="number"  id ="harga" class="form-control" placeholder="Input Harga Barang" />
-								</div>
-								<div class="form-group">
-									<label>Deskripsi</label>
-									<textarea type="text"  id ="deskripsi" class="form-control" placeholder="Input Deskripsi Barang"> </textarea>
-								</div>
-								<!-- <div class="form-group">
-									<label>Status Jabatan</label>
-									<div></div>
-									<select id ="status" class="custom-select form-control">
-										<option value="" disabled selected>Open this select menu</option>
-										<option value="Kontrak">Kontrak</option>
-										<option value="Tetap">Tetap</option>
-									</select>
-								</div> -->
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Close</button>
-								<button type="button" class="btn btn-primary font-weight-bold" data-dismiss="modal" onclick="add_edit()">Save changes</button>
-							</div>
-						</div>
-					</div>
-				</div>
-				<!-- end:: Modal Add -->
 				<div class="card-body">
 					<!--begin: Datatable-->
 					<table class="table table-separate table-head-custom table-checkable" id="kt_datatable1">
 						<thead>
 							<tr>
 								<th>No </th>
-								<th>Nama Barang</th>
-								<th>Harga (IDR)</th>
-								<th>Deskripsi</th>
-								<th>Actions</th>
+								<!-- <th>ID</th> -->
+								<th >Kategori</th>
+								<th >Bobot Minimum</th>
+								<th >Bobot Maksimum</th>
+								<!-- <th>Password</th> -->
+								<th>Nilai</th>
+								<th >Actions</th>
 							</tr>
 						</thead>    
 						<tbody> 
-							<!-- <tr>
-								<td>1</td>
-								<td>Sheryl Giddings</td>
-								<td>
-									<span class="label  label-xl label-inline label-light-primary">
-										Female
-									</span>
-								</td>
-								<td>23</td>
-								<td>Jl Pancawarna 5.4/11</td>
-								<td>0812348178314</td>
-								<td>Sheryl@gmail.com</td>
-								<td>Ketua Umum</td>
-								<td>Berat</td>
-								<td nowrap="nowrap"></td>
-							</tr>
-							<tr>
-								<td>2</td>
-								<td>Hadi Iwyanto</td>
-								<td>
-									<span class=" label  label-xl label-inline label-light-success">
-										Male
-									</span>
-								</td>
-								<td>23</td>
-								<td>Jl Pancawarna 5.4/11</td>
-								<td>0812348178314</td>
-								<td>Sheryl@gmail.com</td>
-								<td>Ketua Umum</td>
-								<td>Berat</td>
-								<td nowrap="nowrap"></td>
-							</tr> -->
 						</tbody>
 					</table>
 					<!--end: Datatable-->
@@ -181,25 +115,18 @@ $(document).ready(function(){
 	refreshTable();
 });
 
-$("#button_add").click(function(){
-  	trigerUpdate = false;
-  	$('#addModalLabel').text('Tambah Data Barang');
-	$('#nama').val('');
-    $('#harga').val('');
-	$('#deskripsi').val('');
-});
-
 function refreshTable(){
 	$('#kt_datatable1').DataTable({
 		"bDestroy": true,
 	    "responsive":true,
-	    "orderCellsTop": true,
+	    // "orderCellsTop": true,
 	    "fixedHeader": true,
 	    scrollCollapse: true,
 		autoWidth: false,
 		responsive: true,
+	    // ajax: "{{url('/pegawai/data_json')}}",
 		ajax: {
-			url: "{{route('barang_json')}}",
+			url: "{{ route('nilai_json') }}",
 			error: function(xhr, errorType, thrownError) {
 				$('.dataTables_empty').text("No data available in table");
 				console.error("Kesalahan AJAX:", thrownError);
@@ -217,77 +144,27 @@ function refreshTable(){
 	                return meta.row + meta.settings._iDisplayStart + 1;
 	            }  
 	    	},
-	        { data: 'nama_barang', name: 'nama_barang' },
-	        { data: 'harga', name: 'harga' },
-			{ data: 'deskripsi', name: 'deskripsi' },
+	        { data: 'kategori_nilai', name: 'kategori_nilai' },
+			{ data: 'minimum_bobot',name: 'minimum_bobot' },
+			{ data: 'maksimum_bobot',name: 'maksimum_bobot' },
+			{ data: 'nilai',name: 'nilai' },
 	        { 
 	          // btn ripple- btn-round btn-3d btn-success
-	            "data": "id",
+	            "data": "idnilai",
 	            "orderable": false,
 	            "render": function ( data, type, row ) {
-                return "<div style='white-space: nowrap;'><a class='btn btn-icon btn-light-warning btn-xs mr-2'  data-toggle='modal' onclick=\"prepareupdate(true,'"+data+"','"+row.nama_barang+"','"+row.harga+"','"+row.deskripsi+"')\" data-target='#modal_add' >"+
+                return "<a class='btn btn-icon btn-light-success btn-xs mr-2' href='{{asset('/nilai/view_form')}}?id="+data+"&view=1' id ="+data+">"+
+					"<i class=' fas fa-eye'></i></a>"+"<a class='btn btn-icon btn-light-warning btn-xs mr-2'   href='{{asset('/nilai/view_form')}}?id="+data+"' id ="+data+">"+
 					"<i class=' fas fa-pencil-alt'></i></a>"+"<a class='btn btn-icon btn-light-danger btn-xs mr-2' href='#' onclick=\"remove('"+data+"')\" >"+
-					"<i class=' fas fa-trash'></i></a></div>";
-					(state,id, nama_barang,harga,deskripsi)
+					"<i class=' fas fa-trash'></i></a>"
                 }
 	        }
 	    ]
     });
 };
 
-trigerUpdate = false;
-paramid = '';
-
-function prepareupdate(state,id, nama_barang,harga,deskripsi) {
-    trigerUpdate = state;
-    paramid = id;
-	$('#addModalLabel').text('Edit Data Barang');
-    $('#nama').val(nama_barang);
-    $('#harga').val(harga);
-	$('#deskripsi').val(deskripsi);
-}
-
-function add_edit() {
-	var nama_barang = $('#nama').val();
-    var harga = $('#harga').val();
-	var deskripsi = $('#deskripsi').val();
-
-	$.ajax({  
-        url : (!trigerUpdate?"{{route('barang_add')}}":"{{route('barang_edit')}}"),
-        type : "post",
-        data: {
-            "_token": "{{ csrf_token() }}",
-            param_id:paramid,
-            param_nama:nama_barang,
-			param_harga:harga,
-            param_deskripsi:deskripsi
-            },
-        dataType : "json",
-        async : false,
-		error: function(xhr, errorType, thrownError,result) {
-			// console.error("Kesalahan AJAX:", result);
-			Swal.fire(
-					'Error!',
-					thrownError,
-					'error'
-				)
-		},
-        success : function(result){
-        	if(result.success){
-        		refreshTable();
-        	}
-        	mIsUpdate = false;
-        	Swal.fire({
-			  icon: 'success',
-			  title: 'You clicked the button!',
-			  text: 'Data Berhasil Simpan !',
-			})
-        }
-    });
-	
-}
-
 function remove(id) {
+	console.log(id);
 
 	swal.fire({
 		title: 'Apakah Anda Yakin?',
@@ -300,7 +177,7 @@ function remove(id) {
     }).then(function(result) {
         if (result.value) {
 			$.ajax({  
-				url : "{{route('barang_remove')}}",
+				url : "{{ route('user_remove') }}",
 				type: 'POST',
 				data: {
 				  "_token": "{{ csrf_token() }}",

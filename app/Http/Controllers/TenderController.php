@@ -24,9 +24,24 @@ class TenderController extends Controller
         return view('content.tender.tender_add');
     }
 
+    private function getNilaiTender($tipe) {
+        try {
+            $nilaiTender = DB::table('nilais')
+            ->where('tipe', $tipe)
+            ->get();
+
+            return $nilaiTender;
+            
+        } catch (\Throwable $th) {
+            return collect();
+        }
+        
+    }
+
     public function tender_json(Request $request) {
         try{
-            //select all tender   
+            $nilaiTender = $this->getNilaiTender(1);  
+             
             
             // return $request;
             $pesanans = Pesanan::with(['customer.pegawai', 'barang'])
@@ -34,6 +49,7 @@ class TenderController extends Controller
                     $query->where('idpegawai_input', session('id'));
                 })
                 ->where(DB::raw('QUARTER(STR_TO_DATE(tanggal_pemesanan, "%Y-%m-%d"))') ,$request->param_quarter)
+                ->where(DB::raw('YEAR(STR_TO_DATE(tanggal_pemesanan, "%Y-%m-%d"))'), DB::raw('YEAR(CURDATE())'))
                 ->get()
                 ->map(function ($pesanan) {
                     return [
@@ -59,14 +75,140 @@ class TenderController extends Controller
             $totalorder = $pesanans->sum('jumlah_order');
             $totalorderacc = $filteredPesanans->sum('jumlah_order');
 
-            if ($totalorderacc == 0){
-                $poin = 0;
-            }else if($totalorderacc <300){
-                $poin = 5;
-            } else if ($totalorderacc >= 300 && $totalorderacc <=1500){
-                $poin = 7;
+            if ($request->param_range){
+                $year = $request->param_range;
             } else {
-                $poin = 9;
+                $year = Carbon::now()->year;
+            }
+
+            $nilaipeg = DB::table('detail_penilaians')
+            ->where('jenis_penilaian' ,'tender')
+            ->where(DB::raw('QUARTER(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d"))') ,$request->param_quarter)
+            ->where(DB::raw('YEAR(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d"))'),$year)
+            ->where('pegawai_idpegawai', session('id'))
+            ->get();
+
+
+            // old
+            // if ($totalorderacc == 0){
+            //     $poin = 0;
+            // }else if($totalorderacc <300){
+            //     $poin = 5;
+            // } else if ($totalorderacc >= 300 && $totalorderacc <=1500){
+            //     $poin = 7;
+            // } else {
+            //     $poin = 9;
+            // }
+
+            //tidak dipakai karena langsung ambil table detail nilai
+            // if ($totalorderacc == 0) {
+            //     $poin = 0;
+            // } else {
+            //     $kategori = $nilaiTender->filter(function ($nilai) use ($totalorderacc) {
+            //         return $totalorderacc >= $nilai->minimum_bobot && $totalorderacc <= $nilai->maksimum_bobot;
+            //     })->first();
+            //     $poin = $kategori ? $kategori->nilai : 0;
+            // }
+
+            return response()->json([
+                'success' => true,
+                'data' => $pesanans,
+                'totalorder' =>$totalorder,
+                'totalorderacc'=>$totalorderacc,
+                'poin' => $nilaipeg->isNotEmpty() ? $nilaipeg->first()->nilai : 0
+            ]);
+        }catch (\Throwable $th){
+            return [
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat pengambilan data',
+                'error' => $th->getMessage(),
+                'lineerror' => $th->getLine()
+            ];
+        }
+
+    }
+
+    public function tender_jsonnew(Request $request) {
+        try{
+            $nilaiTender = $this->getNilaiTender(1);   
+            
+            // return $request;
+            // $pesanans = Pesanan::with(['customer.pegawai', 'barang'])
+            //     ->whereHas('customer', function ($query) {
+            //         $query->where('idpegawai_input', session('id'));
+            //     })
+            //     ->where(DB::raw('QUARTER(STR_TO_DATE(tanggal_pemesanan, "%Y-%m-%d"))') ,$request->param_quarter)
+            //     ->where(DB::raw('YEAR(STR_TO_DATE(tanggal_pemesanan, "%Y-%m-%d"))'), DB::raw('YEAR(CURDATE())'))
+            //     ->get()
+            //     ->map(function ($pesanan) {
+            //         return [
+            //             'id_pesanan' =>$pesanan->id_pesanan,
+            //             'nama_pegawai' => $pesanan->customer->pegawai->nama_pegawai,
+            //             'nama_customer' => $pesanan->customer->nama_customer,
+            //             'email' => $pesanan->customer->email,
+            //             'nomor_telefon' => $pesanan->customer->nomor_telefon,
+            //             'pengiriman_idpengiriman' => $pesanan->pengiriman_idpengiriman,
+            //             'nama_barang' => $pesanan->barang->nama_barang,
+            //             'jumlah_order' => $pesanan->jumlah_order,
+            //             'tanggal_pemesanan' => Carbon::parse($pesanan->tanggal_pemesanan)->format('Y-m-d'),
+            //             'tanggal_pengiriman' => Carbon::parse($pesanan->tanggal_pengiriman)->format('Y-m-d'),
+            //             'status_app_pesanan' => $pesanan->status_app_pesanan,
+            //         ];
+            //     });
+
+            $pesanans = Pesanan::with(['customer.pegawai', 'barang'])
+                ->where(DB::raw('QUARTER(STR_TO_DATE(tanggal_pemesanan, "%Y-%m-%d"))'), $request->param_quarter)
+                ->get()
+                ->map(function ($pesanan) {
+                    return [
+                        'id_pesanan' => $pesanan->id_pesanan,
+                        'id_pegawai' => $pesanan->customer->pegawai->idpegawai,
+                        'nama_pegawai' => $pesanan->customer->pegawai->nama_pegawai,
+                        'nama_customer' => $pesanan->customer->nama_customer,
+                        'email' => $pesanan->customer->email,
+                        'nomor_telefon' => $pesanan->customer->nomor_telefon,
+                        'pengiriman_idpengiriman' => $pesanan->pengiriman_idpengiriman,
+                        'nama_barang' => $pesanan->barang->nama_barang,
+                        'jumlah_order' => $pesanan->jumlah_order,
+                        'tanggal_pemesanan' => Carbon::parse($pesanan->tanggal_pemesanan)->format('Y-m-d'),
+                        'tanggal_pengiriman' => Carbon::parse($pesanan->tanggal_pengiriman)->format('Y-m-d'),
+                        'status_app_pesanan' => $pesanan->status_app_pesanan,
+                    ];
+                });
+            
+ 
+
+            $filteredPesanans = $pesanans->filter(function ($pesanan) {
+                return $pesanan['status_app_pesanan'] == '1';
+            });
+
+            $totalorder = $pesanans->sum('jumlah_order');
+            $totalorderacc = $filteredPesanans->sum('jumlah_order');
+
+
+            $totalOrderPerCustomer = $filteredPesanans->groupBy('id_pegawai')->map(function ($orders) {
+                return $orders->sum('jumlah_order');
+            });
+            
+            // old
+            // if ($totalorderacc == 0){
+            //     $poin = 0;
+            // }else if($totalorderacc <300){
+            //     $poin = 5;
+            // } else if ($totalorderacc >= 300 && $totalorderacc <=1500){
+            //     $poin = 7;
+            // } else {
+            //     $poin = 9;
+            // }
+
+            //new
+            if ($totalorderacc == 0) {
+                $poin = 0;
+            } else {
+                $kategori = $nilaiTender->filter(function ($nilai) use ($totalorderacc) {
+                    return $totalorderacc >= $nilai->minimum_bobot && $totalorderacc <= $nilai->maksimum_bobot;
+                })->first();
+                $poin = $kategori ? $kategori->nilai : 0;
             }
 
             return response()->json([
@@ -120,14 +262,25 @@ class TenderController extends Controller
             $totalorder = $pesanans->sum('jumlah_order');
             $totalorderacc = $filteredPesanans->sum('jumlah_order');
 
-            if ($totalorderacc == 0){
+            // if ($totalorderacc == 0){
+            //     $poin = 0;
+            // }else if($totalorderacc <= 300){
+            //     $poin = 5;
+            // } else if ($totalorderacc >= 300 && $totalorderacc <=1500){
+            //     $poin = 7;
+            // } else {
+            //     $poin = 9;
+            // }
+            
+            //new
+            $nilaiTender = $this->getNilaiTender(1);   
+             if ($totalorderacc == 0) {
                 $poin = 0;
-            }else if($totalorderacc <300){
-                $poin = 5;
-            } else if ($totalorderacc >= 300 && $totalorderacc <=1500){
-                $poin = 7;
             } else {
-                $poin = 9;
+                $kategori = $nilaiTender->filter(function ($nilai) use ($totalorderacc) {
+                    return $totalorderacc >= $nilai->minimum_bobot && $totalorderacc <= $nilai->maksimum_bobot;
+                })->first();
+                $poin = $kategori ? $kategori->nilai : 0;
             }
 
             return response()->json([
@@ -188,15 +341,25 @@ class TenderController extends Controller
             $totalorder = $pesanans->sum('jumlah_order');
             $totalorderacc = $filteredPesanans->sum('jumlah_order');
 
-            if ($totalorderacc == 0){
-                $poin = 0;
-            }else if($totalorderacc <300){
-                $poin = 5;
-            } else if ($totalorderacc >= 300 && $totalorderacc <=1500){
-                $poin = 7;
-            } else {
-                $poin = 9;
-            }
+            // if ($totalorderacc == 0){
+            //     $poin = 0;
+            // }else if($totalorderacc <300){
+            //     $poin = 5;
+            // } else if ($totalorderacc >= 300 && $totalorderacc <=1500){
+            //     $poin = 7;
+            // } else {
+            //     $poin = 9;
+            // }
+
+            $nilaiTender = $this->getNilaiTender(1);   
+            if ($totalorderacc == 0) {
+               $poin = 0;
+           } else {
+               $kategori = $nilaiTender->filter(function ($nilai) use ($totalorderacc) {
+                   return $totalorderacc >= $nilai->minimum_bobot && $totalorderacc <= $nilai->maksimum_bobot;
+               })->first();
+               $poin = $kategori ? $kategori->nilai : 0;
+           }
 
             return response()->json([
                 'success' => true,
@@ -258,15 +421,25 @@ class TenderController extends Controller
             $totalorder = $pesanans->sum('jumlah_order');
             $totalorderacc = $filteredPesanans->sum('jumlah_order');
 
-            if ($totalorderacc == 0){
-                $poin = 0;
-            }else if($totalorderacc <300){
-                $poin = 5;
-            } else if ($totalorderacc >= 300 && $totalorderacc <=1500){
-                $poin = 7;
-            } else {
-                $poin = 9;
-            }
+            // if ($totalorderacc == 0){
+            //     $poin = 0;
+            // }else if($totalorderacc <300){
+            //     $poin = 5;
+            // } else if ($totalorderacc >= 300 && $totalorderacc <=1500){
+            //     $poin = 7;
+            // } else {
+            //     $poin = 9;
+            // }
+
+            $nilaiTender = $this->getNilaiTender(1);   
+            if ($totalorderacc == 0) {
+               $poin = 0;
+           } else {
+               $kategori = $nilaiTender->filter(function ($nilai) use ($totalorderacc) {
+                   return $totalorderacc >= $nilai->minimum_bobot && $totalorderacc <= $nilai->maksimum_bobot;
+               })->first();
+               $poin = $kategori ? $kategori->nilai : 0;
+           }
 
             return response()->json([
                 'success' => true,
@@ -602,10 +775,6 @@ class TenderController extends Controller
                     $tanggalpemesanan = Carbon::parse($tenderacc->tanggal_pemesanan);
                     $tenderacc_year = $tanggalpemesanan->year;
                     $tenderacc_quarter = $tanggalpemesanan->quarter;
-    
-               
-    
-                   
                     
                     if ($tenderacc){
                         $jumlahorder = Pesanan::select(DB::raw('SUM(jumlah_order) AS jumlah_order'))
@@ -617,21 +786,7 @@ class TenderController extends Controller
                         ->groupBy(DB::raw('YEAR(STR_TO_DATE(tanggal_pemesanan, "%Y-%m-%d"))'), DB::raw('QUARTER(STR_TO_DATE(tanggal_pemesanan, "%Y-%m-%d"))'))
                         ->get();
     
-                        
-    
-                        // return $jumlahorder;
-                        // foreach ($jumlahorder as $jumlahorder_nilai) {
-                            if ($jumlahorder[0]->jumlah_order < 300) {
-                                $nilai = 5;
-                            } elseif ($jumlahorder[0]->jumlah_order >= 300 && $jumlahorder[0]->jumlah_order <= 1500) {
-                                $nilai = 7;
-                            } else {
-                                $nilai = 9;
-                            }
-                        // }
-    
-                        // return $nilai;
-                        
+                        //old 
                         // if ($jumlahorder[0]->jumlah_order < 300) {
                         //     $nilai = 5;
                         // } elseif ($jumlahorder[0]->jumlah_order >= 300 && $jumlahorder[0]->jumlah_order <= 1500) {
@@ -639,8 +794,16 @@ class TenderController extends Controller
                         // } else {
                         //     $nilai = 9;
                         // }
+
+                        $nilaiTender = $this->getNilaiTender(1);
+                        $kategori = $nilaiTender->filter(function ($nilai) use ($jumlahorder) {
+                            return $jumlahorder[0]->jumlah_order >= $nilai->minimum_bobot &&
+                                   $jumlahorder[0]->jumlah_order <= $nilai->maksimum_bobot;
+                        })->first();
+
+                        $nilai = $kategori ? $kategori->nilai : 0;
     
-                        // return [$nilai];
+                    
     
                          //cek apakh sudah ada que dan year yg sama
                          $tendernilai = Penilaian::where('pegawai_idpegawai', $tenderacc->idpegawai_input)

@@ -11,6 +11,7 @@ use App\Http\Controllers\PesananController;
 use App\Http\Controllers\TenderController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\PelanggaranController;
+use App\Http\Controllers\NilaiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -169,6 +170,17 @@ Route::group(['middleware' => 'CekLogin'], function() {
     Route::post('/pelanggaran/remove_action',[PelanggaranController::class, 'pelanggaran_remove_action'])->name('pelanggaran_remove_action');
     Route::get('/pelanggaran/table_view',[PelanggaranController::class, 'pelanggaran_table_view'])->name('pelanggaran_table_view');
     Route::post('/pelanggaran/table_data',[PelanggaranController::class, 'pelanggaran_table_data'])->name('pelanggaran_table_data');
+
+
+    //MASTERNILAI
+    Route::get('/nilaitender', [NilaiController::class, 'nilaitender'])->name('nilai');
+    Route::post('/nilai/json', [NilaiController::class, 'nilai_json'])->name('nilai_json');
+    Route::get('/nilai/view_form_tender', [NilaiController::class, 'nilai_view_form_tender'])->name('nilai_view_form_tender');
+    Route::get('/nilai/view_form_customer', [NilaiController::class, 'nilai_view_form_customer'])->name('nilai_view_form_customer');
+    Route::get('/nilai/prepare_edit', [NilaiController::class, 'nilai_prepare_edit'])->name('nilai_prepare_edit');
+    Route::post('/nilai/add_action_tender', [NilaiController::class, 'nilai_add_action_tender'])->name('nilai_add_action_tender');
+    Route::post('/nilai/add_action_cust', [NilaiController::class, 'nilai_add_action_cust'])->name('nilai_add_action_cust');
+
 
     Route::get('/filesurat/{file}', function ($file) {
         $path = public_path('filesurat/' . $file);

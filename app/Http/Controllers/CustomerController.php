@@ -20,42 +20,79 @@ class CustomerController extends Controller
         return view('content.customer.customer_add');
     }
 
+    private function getNilaiCust($tipe) {
+        try {
+            $nilaiTender = DB::table('nilais')
+            ->where('tipe', $tipe)
+            ->get();
+
+            return $nilaiTender;
+            
+        } catch (\Throwable $th) {
+            return collect();
+        }
+        
+    }
+
     public function customer_json(Request $request)
     {
+
+        if ($request->param_range){
+            $year = $request->param_range;
+        } else {
+            $year = Carbon::now()->year;
+        }
         $customer = DB::table('customers')
         ->where(DB::raw('QUARTER(created_at)'),$request->param_quarter)
+        ->where(DB::raw('YEAR(STR_TO_DATE(created_at, "%Y-%m-%d"))'),$year)
         ->where('idpegawai_input', session('id'))
         ->get();
 
         $totalcust = DB::table('customers')
         ->where(DB::raw('QUARTER(created_at)'),$request->param_quarter)
+        ->where(DB::raw('YEAR(STR_TO_DATE(created_at, "%Y-%m-%d"))'),$year)
         ->where('idpegawai_input', session('id'))
         ->count();
 
         $totalcustacc = DB::table('customers')
         ->where(DB::raw('QUARTER(created_at)'),$request->param_quarter)
+        ->where(DB::raw('YEAR(STR_TO_DATE(created_at, "%Y-%m-%d"))'),$year)
         ->where('idpegawai_input', session('id'))
         ->where('status_app_data_customer', '1')
         ->count();
 
-        if ($totalcustacc == 0){
-            $poin = 0;
-        } else if($totalcustacc <30){
-            $poin = 5;
-        } else if ($totalcustacc >= 30 && $totalcustacc <=60){
-            $poin = 7;
-        } else {
-            $poin = 9;
-        }
+        // if ($totalcustacc == 0){
+        //     $poin = 0;
+        // } else if($totalcustacc <30){
+        //     $poin = 5;
+        // } else if ($totalcustacc >= 30 && $totalcustacc <=60){
+        //     $poin = 7;
+        // } else {
+        //     $poin = 9;
+        // }
 
-        
+        // $nilaiCust =$this->getNilaiCust(2); 
+
+        // $kategori = $nilaiCust->filter(function ($nilai) use ($totalcustacc) {
+        //     return $totalcustacc >= $nilai->minimum_bobot &&
+        //         $totalcustacc <= $nilai->maksimum_bobot;
+        // })->first();
+
+        // $poin = $kategori ? $kategori->nilai : 0;
+
+        $nilaipeg = DB::table('detail_penilaians')
+        ->where('jenis_penilaian' ,'customer')
+        ->where(DB::raw('QUARTER(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d"))') ,$request->param_quarter)
+        ->where(DB::raw('YEAR(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d"))'),$year)
+        ->where('pegawai_idpegawai', session('id'))
+        ->get();
 
         // dd($customer);
         return response()->json([
             'data' => $customer,
             'totalcust' =>$totalcust,
             'totalcustacc' => $totalcustacc,
-            'poin' =>$poin
+            'poin' => $nilaipeg->isNotEmpty() ? $nilaipeg->first()->nilai : 0
             ]);
     }
     
@@ -86,16 +123,26 @@ class CustomerController extends Controller
                     ->where('status_app_data_customer', '1')
                     ->count();
         
-                if ($totalcustacc ==0){
-                    $poin = 0;
-                }
-                else if($totalcustacc <30){
-                    $poin = 5;
-                } else if ($totalcustacc >= 30 && $totalcustacc <=60){
-                    $poin = 7;
-                } else {
-                    $poin = 9;
-                }
+                // if ($totalcustacc ==0){
+                //     $poin = 0;
+                // }
+                // else if($totalcustacc <30){
+                //     $poin = 5;
+                // } else if ($totalcustacc >= 30 && $totalcustacc <=60){
+                //     $poin = 7;
+                // } else {
+                //     $poin = 9;
+                // }
+
+                $nilaiCust = $nilaiCust =$this->getNilaiCust(2); 
+
+                $kategori = $nilaiCust->filter(function ($nilai) use ($totalcustacc) {
+                    return $totalcustacc >= $nilai->minimum_bobot &&
+                        $totalcustacc <= $nilai->maksimum_bobot;
+                })->first();
+
+                $poin = $kategori ? $kategori->nilai : 0;
+                
             } else {
                 $customer = DB::table('customers')
                 ->where(DB::raw('QUARTER(created_at)'),$request->param_quarter)
@@ -122,13 +169,22 @@ class CustomerController extends Controller
                 
         
         
-                if(($totalcustacc) <30){
-                    $poin = 5;
-                } else if ($totalcustacc >= 30 && $totalcustacc <=60){
-                    $poin = 7;
-                } else {
-                    $poin = 9;
-                }
+                // if(($totalcustacc) <30){
+                //     $poin = 5;
+                // } else if ($totalcustacc >= 30 && $totalcustacc <=60){
+                //     $poin = 7;
+                // } else {
+                //     $poin = 9;
+                // }
+
+                $nilaiCust = $nilaiCust =$this->getNilaiCust(2);
+
+                $kategori = $nilaiCust->filter(function ($nilai) use ($totalcustacc) {
+                    return $totalcustacc >= $nilai->minimum_bobot &&
+                        $totalcustacc <= $nilai->maksimum_bobot;
+                })->first();
+
+                $poin = $kategori ? $kategori->nilai : 0;
             
             
                
@@ -447,17 +503,27 @@ class CustomerController extends Controller
                         // return $jumlahcust;
 
 
-                        foreach ($jumlahcust as $jumlahcust_nilai) {
-                            if ($jumlahcust_nilai->total_customers < 30) {
-                                $nilai = 5;
-                            } elseif ($jumlahcust_nilai->total_customers >= 30 && $jumlahcust_nilai->total_customers <= 60) {
-                                $nilai = 7;
-                            } else {
-                                $nilai = 9;
-                            }
-                        }
+                        // foreach ($jumlahcust as $jumlahcust_nilai) {
+                        //     if ($jumlahcust_nilai->total_customers < 30) {
+                        //         $nilai = 5;
+                        //     } elseif ($jumlahcust_nilai->total_customers >= 30 && $jumlahcust_nilai->total_customers <= 60) {
+                        //         $nilai = 7;
+                        //     } else {
+                        //         $nilai = 9;
+                        //     }
+                        // }
 
-                        // return $nilai;
+                        $nilaiCust =$this->getNilaiCust(2);
+                        foreach ($jumlahcust as $jumlahcust_nilai) {
+                            // Cari kategori nilai yang sesuai dengan total_customers
+                            $kategori = $nilaiCust->filter(function ($nilai) use ($jumlahcust_nilai) {
+                                return $jumlahcust_nilai->total_customers >= $nilai->minimum_bobot &&
+                                       $jumlahcust_nilai->total_customers <= $nilai->maksimum_bobot;
+                            })->first();
+                        
+                            // Tetapkan nilai berdasarkan kategori, jika tidak ada default ke 0
+                            $nilai = $kategori ? $kategori->nilai : 0;
+                        }
                         
 
                         //cek apakh sudah ada que dan year yg sama
