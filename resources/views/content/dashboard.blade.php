@@ -473,7 +473,7 @@
               chart = new ApexCharts(document.querySelector("#chart"), options);
               chart.render();
             }
-            if(result.nilaiRekomen > 5.4){
+            if(result.nilaiRekomen > result.nilaiRekomenMain){
               $('#rekomen').addClass('bg-light-success');
               $('#rekomen').append('<span class="svg-icon svg-icon-success mr-5">'+
                                     '<span class="svg-icon svg-icon-lg">'+
