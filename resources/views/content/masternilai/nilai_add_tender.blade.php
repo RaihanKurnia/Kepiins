@@ -448,16 +448,23 @@ function preparedit(paramid) {
     },
     success : function(result){
         trigerUpdate = true;
+        console.log(!result.data[0]);
 
-        $('#minimum_rendah').val(result.data[0].minimum_bobot);
-        $('#maksimum_rendah').val(result.data[0].maksimum_bobot);
-        $('#nilai_rendah').val(result.data[0].nilai);
-        $('#minimum_sedang').val(result.data[1].minimum_bobot);
-        $('#maksimum_sedang').val(result.data[1].maksimum_bobot);
-        $('#nilai_sedang').val(result.data[1].nilai);
-        $('#minimum_tinggi').val(result.data[2].minimum_bobot);
-        $('#maksimum_tinggi').val(result.data[2].maksimum_bobot);
-        $('#nilai_tinggi').val(result.data[2].nilai);
+        if(!result.data[0]) {
+            $('#minimum_rendah').val(1);
+        } else {
+            $('#minimum_rendah').val(result.data[0].minimum_bobot);
+            $('#maksimum_rendah').val(result.data[0].maksimum_bobot);
+            $('#nilai_rendah').val(result.data[0].nilai);
+            $('#minimum_sedang').val(result.data[1].minimum_bobot);
+            $('#maksimum_sedang').val(result.data[1].maksimum_bobot);
+            $('#nilai_sedang').val(result.data[1].nilai);
+            $('#minimum_tinggi').val(result.data[2].minimum_bobot);
+            $('#maksimum_tinggi').val(result.data[2].maksimum_bobot);
+            $('#nilai_tinggi').val(result.data[2].nilai);
+        }
+
+        
         
                 // $('#nama').val(result.success[0].nama_pegawai);
                 // $('#role').val(result.success[0].role);
