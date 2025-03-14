@@ -76,9 +76,15 @@ class DashboardController extends Controller
         $nilaiRekomendasi = DB::table('nilais')
         ->where('tipe', 3)
         ->get();
-
-        // dd($nilaiRekomendasi);
         
+        $nilaiRekomen = 0 ;
+        if ($nilaiRekomendasi->isEmpty()) {
+            $nilaiRekomen = 0;
+        } else {
+            $nilaiRekomen = $nilaiRekomendasi[0]->nilai;
+        }
+        
+
         foreach ($resultsnilai1 as $resultnilai1) {
             $total = $resultnilai1->nilai;
             $nilai1default[$resultnilai1->triwulan] = $total;
@@ -148,7 +154,7 @@ class DashboardController extends Controller
             'jmlhcustomer' => $jumlahcustomerall,
             'jmlhpesanan' =>$jumlahpesanantenderrall,
             'jmlhpelanggaran'=>$jumlahpelanggaranall,
-            'nilaiRekomenMain' => $nilaiRekomendasi[0]->nilai,
+            'nilaiRekomenMain' => $nilaiRekomen,
             'message'   => true
         ];  
         

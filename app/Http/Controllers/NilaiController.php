@@ -33,6 +33,10 @@ class NilaiController extends Controller
         return view('content.masternilai.nilai_add_customer');
     }
 
+    public function nilai_view_form_rekomen() {
+        return view('content.masternilai.nilai_add_rekomendasi');
+    }
+
     public function nilai_add_actionbckp(Request $request) {
        
         DB::beginTransaction();
@@ -358,6 +362,46 @@ class NilaiController extends Controller
           
 
        
+
+            DB::commit(); 
+            return [
+                'success' => true,
+                'message' => 'Data berhasil disimpan'
+            ];
+
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return [
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat penyimpanan data',
+                'error' => $th->getMessage(),
+                'line' => $th->getLine()
+            ];
+        }
+    }
+
+    public function nilai_add_action_rekomen(Request $request) {
+       
+        DB::beginTransaction();
+        try {
+            $datanilai = $request->input('params');
+            $nilaiCust = [];
+
+            foreach ($datanilai as $nilai) {
+               DB::table('nilais')->updateOrInsert(
+                    [   
+                        'kategori_nilai' => $nilai['kategori'],
+                        'tipe' => $nilai['tipe']
+                    ], 
+                    [
+                        'nilai' => $nilai['nilai'],
+                        'minimum_bobot' => $nilai['minimum'],
+                        'maksimum_bobot' => $nilai['maksimum'],
+                        'updated_at' => now(),
+                        'created_at' => now(),
+                    ]
+                ); 
+            }
 
             DB::commit(); 
             return [

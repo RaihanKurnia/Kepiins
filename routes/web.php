@@ -177,10 +177,11 @@ Route::group(['middleware' => 'CekLogin'], function() {
     Route::post('/nilai/json', [NilaiController::class, 'nilai_json'])->name('nilai_json');
     Route::get('/nilai/view_form_tender', [NilaiController::class, 'nilai_view_form_tender'])->name('nilai_view_form_tender');
     Route::get('/nilai/view_form_customer', [NilaiController::class, 'nilai_view_form_customer'])->name('nilai_view_form_customer');
+    Route::get('/nilai/view_form_rekomen', [NilaiController::class, 'nilai_view_form_rekomen'])->name('nilai_view_form_rekomen');
     Route::get('/nilai/prepare_edit', [NilaiController::class, 'nilai_prepare_edit'])->name('nilai_prepare_edit');
     Route::post('/nilai/add_action_tender', [NilaiController::class, 'nilai_add_action_tender'])->name('nilai_add_action_tender');
     Route::post('/nilai/add_action_cust', [NilaiController::class, 'nilai_add_action_cust'])->name('nilai_add_action_cust');
-
+    Route::post('/nilai/add_action_rekomen', [NilaiController::class, 'nilai_add_action_rekomen'])->name('nilai_add_action_rekomen');
 
     Route::get('/filesurat/{file}', function ($file) {
         $path = public_path('filesurat/' . $file);

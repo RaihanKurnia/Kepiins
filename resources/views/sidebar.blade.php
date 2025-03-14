@@ -570,7 +570,14 @@
                                     <span class="menu-text">Nilai Customer</span>
                                 </a>
                             </li>
-                           
+                            <li class="menu-item" aria-haspopup="true">
+                                <a href="{{asset('/nilai/view_form_rekomen')}}" class="menu-link">
+                                    <i class="menu-bullet menu-bullet-dot">
+                                        <span></span>
+                                    </i>
+                                    <span class="menu-text">Nilai Rekomendasi</span>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                   
