@@ -353,6 +353,8 @@ function searchTable(custname,barang,status,periode) {
 				data: 'status_app_pesanan',
 				name: 'status_app_pesanan',
 				render: function (data, type, row) {
+					console.log(data);
+					
 					if (data === '0') {
 						return  "<span class='label label-xl label-inline label-light-warning'>Pending</span>";
 					} else if (data === '1') {
@@ -368,11 +370,10 @@ function searchTable(custname,barang,status,periode) {
 				"orderable": false,
 				"render": function ( data, type, row ) {
 				if (row.status_app_pesanan === '0') {
-						return "<div style='white-space: nowrap;'>" +
-									"<a class='btn btn-icon btn-light-success btn-xs mr-2' href='{{asset('/tender/view_form')}}?id="+data+"&view=1' id ="+data+">"+
-									"<i class=' fas fa-eye'></i></a>"+"<a class='btn btn-icon btn-light-warning btn-xs mr-2'   href='{{asset('/tender/view_form')}}?id="+data+"' id ="+data+">"+
-									"<i class=' fas fa-pencil-alt'></i></a>"+"<a class='btn btn-icon btn-light-danger btn-xs mr-2' href='#' onclick=\"remove('"+data+"')\" >"+
-									"<i class=' fas fa-trash'></i></a>"+
+					return "<div style='white-space: nowrap;'>" +
+									"<a class='btn btn-icon btn-light-primary btn-xs mr-2' href='{{asset('/tender/view_form')}}?id="+data+"&view=1' id="+data+"><i class='fas fa-eye'></i></a>" +
+									"<button class='btn btn-sm btn-success btn-hover-undefined ml-1' data-placement='top' title='' onclick=\"action('"+data+"','1')\"><i class='far fa-thumbs-up'></i>Approved</button>" +
+									"<button class='btn btn-sm btn-danger btn-hover-undefined ml-1' data-placement='top' title=''onclick=\"action('"+data+"','2')\"><i class='far fa-times-circle'></i>Rejected</button>" +
 								"</div>";
 					} else {
 						return "<div style='white-space: nowrap; text-align: center;' >" +
