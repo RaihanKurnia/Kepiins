@@ -517,8 +517,9 @@ function edit(param) {
 
 function validasi() {
     let debounceTimer;
+    let timeout=1000;
     
-    $('#maksimum_rendah').on('keyup', function() {   
+    $('#maksimum_rendah').on('blur', function() {   
             
         clearTimeout(debounceTimer); 
         
@@ -555,7 +556,7 @@ function validasi() {
             }, maxRendah)
 
             
-        },300);
+        },timeout);
 
     })  
 
@@ -578,10 +579,10 @@ function validasi() {
                     .removeClass('is-valid');;
                 return $(curr).val() !== '';
             }, nilaiRendah)
-        },300);
+        },timeout);
 
     })  
-        
+    
     $('#maksimum_sedang').on('keyup', function() {   
         
         clearTimeout(debounceTimer); 
@@ -615,7 +616,7 @@ function validasi() {
                     .removeClass('is-valid');
                 return $(curr).val() !== '';
             }, maxRendahsedang)
-        },300);
+        },timeout);
 
     })  
 
@@ -650,7 +651,7 @@ function validasi() {
                     .removeClass('is-valid');
                 return $(curr).val() !== '';
             }, maxnilaisedang)
-        },300);
+        },timeout);
 
     })  
 
@@ -686,7 +687,7 @@ function validasi() {
                     .removeClass('is-valid');
                 return $(curr).val() !== '';
             }, maxTinggi)
-        },300);
+        },timeout);
 
     })  
 
@@ -713,7 +714,7 @@ function validasi() {
                 });
                 return;
             }
-        },300);
+        },timeout);
 
     })  
 }
