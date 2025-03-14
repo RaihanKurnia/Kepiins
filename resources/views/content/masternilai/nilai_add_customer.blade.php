@@ -77,15 +77,15 @@
                                 <div class="my-5">
                                     <h3 class="text-dark font-weight-bold mb-10">Kategori <span style="color: white; background-color:#EB5353;">Nilai Rendah</span> : </h3>
                                     <div class="form-group row">
-                                        <label class="col-3">Minimum Bobot</label>
+                                        <label class="col-3">Minimum Range</label>
                                         <div class="col-9">
                                             <input class="form-control" type="text" id="minimum_rendah" />
                                         </div>
                                     </div>
                                     <div class="form-group row ">
-                                        <label class="col-3">Maksimum Bobot</label>
+                                        <label class="col-3">Maksimum Range</label>
                                         <div class="col-9">
-                                            <input class="form-control" type="number" id="maksimum_rendah" placeholder='Input Maksimum Bobot' />
+                                            <input class="form-control" type="number" id="maksimum_rendah" placeholder='Input Maksimum Range' />
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -112,15 +112,15 @@
                                 <div class="my-5">
                                     <h3 class="text-dark font-weight-bold mb-10">Kategori <span style="color: white; background-color:#F9D923;">Nilai Sedang</span> :</h3>
                                     <div class="form-group row">
-                                        <label class="col-3">Minimum Bobot</label>
+                                        <label class="col-3">Minimum Range</label>
                                         <div class="col-9">
                                             <input class="form-control" type="text" id="minimum_sedang" />
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label class="col-3">Maksimum Bobot</label>
+                                        <label class="col-3">Maksimum Range</label>
                                         <div class="col-9">
-                                            <input class="form-control" type="number" id="maksimum_sedang" placeholder='Input Maksimum Bobot' />
+                                            <input class="form-control" type="number" id="maksimum_sedang" placeholder='Input Maksimum Range' />
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -147,15 +147,15 @@
                                 <div class="my-5">
                                     <h3 class="text-dark font-weight-bold mb-10">Kategori <span style="color: white; background-color:#36AE7C;">Nilai Tinggi</span> :</h3>
                                     <div class="form-group row">
-                                        <label class="col-3">Minimum Bobot</label>
+                                        <label class="col-3">Minimum Range</label>
                                         <div class="col-9">
                                             <input class="form-control" type="text" id="minimum_tinggi" />
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label class="col-3">Maksimum Bobot</label>
+                                        <label class="col-3">Maksimum Range</label>
                                         <div class="col-9">
-                                            <input class="form-control" type="number" id="maksimum_tinggi" placeholder='Input Maksimum Bobot' />
+                                            <input class="form-control" type="number" id="maksimum_tinggi" placeholder='Input Maksimum Range' />
                                         </div>
                                     </div>
                                     <div class="form-group row">

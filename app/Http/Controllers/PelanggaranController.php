@@ -242,15 +242,15 @@ class PelanggaranController extends Controller
                     
                     foreach ($jumlahbobot as $sumbobot) {
                     // return $sumbobot->jmlbobot;
-                        if($sumbobot->jmlbobot < 15){
+                        if($sumbobot->jmlbobot < 1){
+                            $nilai = 10;
+                        } else if ($sumbobot->jmlbobot >= 1 && $sumbobot->jmlbobot <= 20) {
                             $nilai = 9;
-                        } else if ($sumbobot->jmlbobot >= 15 && $sumbobot->jmlbobot <= 29) {
-                            $nilai = 7;
-                        } else if ($sumbobot->jmlbobot >= 30 && $sumbobot->jmlbobot <= 44) {
+                        } else if ($sumbobot->jmlbobot >= 21 && $sumbobot->jmlbobot <= 50) {
                             $nilai = 5;
-                        } else if ($sumbobot->jmlbobot >= 45 && $sumbobot->jmlbobot <= 59) {
-                            $nilai = 3; 
-                        } else if ($sumbobot->jmlbobot > 59){
+                        // } else if ($sumbobot->jmlbobot >= 45 && $sumbobot->jmlbobot <= 59) {
+                        //     $nilai = 3; 
+                        } else if ($sumbobot->jmlbobot > 50){
                             $nilai = 0;
                         }
                     }
