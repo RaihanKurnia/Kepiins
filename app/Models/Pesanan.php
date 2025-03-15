@@ -17,7 +17,8 @@ class Pesanan extends Model
     'jumlah_order',
     'barang_idbarang',
     'note',
-    'tanggal_pengiriman'];
+    'tanggal_pengiriman',
+    'pengiriman_idpengiriman'];
 
     public function customer()
     {

@@ -144,6 +144,13 @@
                                     </div>
 
                                     <div class="form-group row">
+                                        <label class="col-3">Alamat Pengiriman</label>
+                                        <div class="col-6">
+                                            <textarea class="form-control" id="alamat_pengiriman" placeholder='Alamat Pengiriman' rows="3" ></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
                                         <label class="col-3">Tanggal Pemesanan</label>
                                         <div class="col-6">
                                             <input type="date" class="form-control"  value="" id="tanggal_pesan" />
@@ -204,6 +211,7 @@ $(document).ready(function(){
         $('#tanggal_pesan').val('');
         $('#tanggal_kirim').val('');
         $('#jml_barang').val('');
+        $('#alamat_kirim').val('');
         $('#pilih_customer').show();
         $('#notearea').hide();
         trigerUpdate = false;
@@ -260,6 +268,7 @@ $(document).ready(function(){
         $('#tanggal_pesan').prop('disabled', true);
         $('#tanggal_kirim').prop('disabled', true);
         $('#jml_barang').prop('disabled', true);
+        $('#alamat_kirim').prop('disabled', true);
     }
 });
 
@@ -298,12 +307,7 @@ function addtender() {
     var jmlbarang = $('#jml_barang').val();
     var tgl_pesan = $('#tanggal_pesan').val();
     var tgl_kirim = $('#tanggal_kirim').val();
-
-    // console.log({idbarang});
-    // console.log({jmlbarang});
-    // console.log({selectcust});
-    // console.log({tgl_pesan});
-    // console.log({tgl_kirim});
+    var alamat_kirim = $('#alamat_pengiriman').val();
 
     if (!idbarang || !jmlbarang || !selectcust || !tgl_pesan || !tgl_kirim) {
         swal.fire({
@@ -315,11 +319,6 @@ function addtender() {
          });
         return; 
     }
-
-    // console.log({selectcust});
-    // console.log({idbarang});
-    // console.log({jmlbarang});
-    
     
     $.ajax({  
         url : (!trigerUpdate?"{{route('add_pesanan')}}":"{{route('update_pesanan')}}"),
@@ -330,7 +329,8 @@ function addtender() {
         param_ordervalue:jmlbarang,
         param_barang:idbarang,
         param_psn : tgl_pesan,
-        param_kirim:tgl_kirim
+        param_kirim:tgl_kirim,
+        param_alamat:alamat_kirim
         },
         dataType : "json",
         async : false,
@@ -355,9 +355,6 @@ function addtender() {
           
         }
     });
-
-
-	
 }
 
 // function listorder(name, id) {
@@ -404,7 +401,7 @@ function preparedit(paramid) {
         $('#alamat').val(result.success.customer.alamat);
         $('#email').val(result.success.customer.email);
         $('#no_telf').val(result.success.customer.nomor_telefon);
-        // $('#barang').val(result.success.barang.nama_barang);
+        $('#alamat_pengiriman').val(result.success.pengiriman_idpengiriman);
         $('#barang').empty().append('<option value="'+result.success.id_pesanan+'">'+result.success.barang.nama_barang+'</option>');
         // $('#barang').val(result.success.barang.barang_idbarang);
         $('#jml_barang').val(result.success.jumlah_order);

@@ -128,7 +128,7 @@ class TenderController extends Controller
 
     }
 
-    public function tender_jsonnew(Request $request) {
+    public function tender_jsonnewnotUsed(Request $request) {
         try{
             $nilaiTender = $this->getNilaiTender(1);   
             
@@ -546,7 +546,8 @@ class TenderController extends Controller
             ->update([
                 'jumlah_order'=>  $request->param_ordervalue,
                 'tanggal_pemesanan' => $request->param_psn,
-                'tanggal_pengiriman' => $request->param_kirim
+                'tanggal_pengiriman' => $request->param_kirim,
+                'pengiriman_idpengiriman' => $request->param_alamat,
             ]);
 
             // if (isset($request->param_order) && is_array($request->param_order)) {
@@ -625,7 +626,8 @@ class TenderController extends Controller
             'tanggal_pengiriman'=> $request->param_kirim,
             'customer_idcustomer' => $request->param_cust,
             'jumlah_order'=>$request->param_ordervalue,
-            'barang_idbarang'=>$request->param_barang
+            'barang_idbarang'=>$request->param_barang,
+            'pengiriman_idpengiriman' => $request->param_alamat
             ]);
 
             // dd($result);

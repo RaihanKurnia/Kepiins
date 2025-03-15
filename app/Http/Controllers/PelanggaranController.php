@@ -125,15 +125,15 @@ class PelanggaranController extends Controller
             $bobot += $pelanggaran_data->bobot_pelanggaran;
         }
 
-        if ($bobot < 15){
+        if ($bobot < 1){
+            $poin = 10;
+        }else if ($bobot >= 1 && $bobot <= 20) {
             $poin = 9;
-        }else if ($bobot >= 15 && $bobot <= 29) {
-            $poin = 7;
-        } else if ($bobot >= 30 && $bobot <= 44) {
+        } else if ($bobot >= 21 && $bobot <= 50) {
             $poin = 5;
-        } else if ($bobot >= 45 && $bobot <= 59) {
-            $poin = 3; 
-        } else if ($bobot > 59){
+        // } else if ($bobot >= 45 && $bobot <= 59) {
+        //     $poin = 3; 
+        } else if ($bobot > 50){
             $poin = 0;
         }
 
