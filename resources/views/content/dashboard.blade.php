@@ -506,8 +506,8 @@
                                     '</span>'+
                                  ' </span>'+
                                   '<div class="d-flex flex-column flex-grow-1 mr-2" >'+
-                                   '<a class="font-weight-bold text-dark-75 font-size-lg mb-1">Nilai Anda : '+result.nilaiRekomen+'</a>'+
-                                    '<span class="text-muted font-weight-bold">Belum Memenuhi Persyaratan Pegawai Tetap</span>'+
+                                   '<a class="font-weight-bold text-dark-75 font-size-lg mb-1">Nilai Anda Pada Periode ini : '+result.nilaiRekomen+'</a>'+' /9 '+
+                                    '<span class="text-muted font-weight-bold">Belum Memenuhi Persyaratan Pegawai Tetap</span>'+ 
                                   '</div>');
             }
             $('#customer-count').text(result.jmlhcustomer);

@@ -4,13 +4,13 @@ namespace App\Http\Controllers;
 
 
 use Illuminate\Http\Request;
-use DB;
+
 use DataTables;
 use Carbon\Carbon;
 use App\Models\Pesanan;
 use App\Models\Customer;
 use App\Models\Penilaian;
-
+use Illuminate\Support\Facades\DB;
 
 class NilaiController extends Controller
 {

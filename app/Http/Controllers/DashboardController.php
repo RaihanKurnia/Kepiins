@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-use DB;
+use Illuminate\Support\Facades\DB;
 use DataTables;
 use Carbon\Carbon;
 use App\Models\Pesanan;
@@ -41,7 +41,7 @@ class DashboardController extends Controller
         $nilai2default = $defaultvalues();
         $nilai3default = $defaultvaluespelanggaran();
         
-
+        // komparasi antaran id sesion dengan pegawai_idpegawai untuk menampilkan detail_penilaians
         $resultsnilai1 = DB::table('detail_penilaians')
         ->where('jenis_penilaian', 'customer')
         ->where(DB::raw('YEAR(STR_TO_DATE(tanggal_penilaian, "%Y-%m-%d"))'),$year)

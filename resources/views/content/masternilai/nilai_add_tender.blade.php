@@ -190,8 +190,8 @@ $(document).ready(function(){
     let debounceTimer;
     if (paramid === null && type== null){
         $('#nilai_form_title').text('Tambah Data Nilai');
-        $('#minimum_rendah').val('1');
-        $('#minimum_rendah').prop('disabled', true);
+        //$('#minimum_rendah').val('1');
+        //$('#minimum_rendah').prop('disabled', true);
         $('#maksimum_rendah').css('border', $(this).val() !== '' || $('#maksimum_rendah').val() === 0? '1px solid green' : '1px solid red');
         $('#nilai_rendah').prop('disabled', true);
 

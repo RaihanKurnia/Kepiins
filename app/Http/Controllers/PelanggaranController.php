@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use DB;
+use Illuminate\Support\Facades\DB;
 use DataTables;
 use App\Models\JenisPelanggaran;
 use App\Models\Pelanggaran;
@@ -124,10 +124,13 @@ class PelanggaranController extends Controller
         foreach ($pelanggaran as $pelanggaran_data) {
             $bobot += $pelanggaran_data->bobot_pelanggaran;
         }
-
-        if ($bobot < 1){
+/*
+        if ($bobot = 0){
             $poin = 10;
-        }else if ($bobot >= 1 && $bobot <= 20) {
+  
+            }
+*/
+             if($bobot >= 1 && $bobot <= 20) {
             $poin = 9;
         } else if ($bobot >= 21 && $bobot <= 50) {
             $poin = 5;

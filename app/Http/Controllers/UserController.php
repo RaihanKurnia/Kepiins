@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-use DB;
+use Illuminate\Support\Facades\DB;
 use DataTables;
 use App\Models\User;
 use App\Models\Pegawai;
